@@ -407,14 +407,15 @@ void RPC::refreshReceivedZTrans(QList<QString> zaddrs) {
             // appears multiple times in a single tx's outputs.
             QSet<QString> txids;
             QMap<QString, QString> memos;
+            auto txdata = new QList<TransactionItem>();
+
             for (auto it = zaddrTxids->constBegin(); it != zaddrTxids->constEnd(); it++) {
                 auto zaddr = it.key();
                 for (auto& i : it.value().get<json::array_t>()) {   
                     // Filter out change txs
                     if (! i["change"].get<json::boolean_t>()) {
                         auto txid = QString::fromStdString(i["txid"].get<json::string_t>());
-                        txids.insert(txid);    
-
+                        
                         // Check for Memos
                         QString memoBytes = QString::fromStdString(i["memo"].get<json::string_t>());
                         if (!memoBytes.startsWith("f600"))  {
@@ -423,6 +424,21 @@ void RPC::refreshReceivedZTrans(QList<QString> zaddrs) {
                             if (!memo.trimmed().isEmpty())
                                 memos[zaddr + txid] = memo;
                         }
+
+                        if (i.find("confirmations") != i.end() && 
+                            i.find("time") != i.end() ) {
+                            qint64 timestamp   = i["time"].get<json::number_unsigned_t>();
+                            auto amount        = i["amount"].get<json::number_float_t>();
+                            auto confirmations = (unsigned long)i["confirmations"].get<json::number_unsigned_t>();                            
+
+                            TransactionItem tx{ QString("receive"), timestamp, zaddr, txid, amount, 
+                                                confirmations, "", memos.value(zaddr + txid, "") };
+                            txdata->push_front(tx);
+                        } else {
+                            // Our zcashd doesn't support the enhanced RPC fields, add it to the
+                            // next batch call.
+                            txids.insert(txid);    
+                        }                        
                     }
                 }        
             }
@@ -440,19 +456,21 @@ void RPC::refreshReceivedZTrans(QList<QString> zaddrs) {
                     return payload;
                 },
                 [=] (QMap<QString, json>* txidDetails) {
-                    QList<TransactionItem> txdata;
-
                     // Combine them both together. For every zAddr's txid, get the amount, fee, confirmations and time
                     for (auto it = zaddrTxids->constBegin(); it != zaddrTxids->constEnd(); it++) {                        
                         for (auto& i : it.value().get<json::array_t>()) {   
                             // Filter out change txs
                             if (i["change"].get<json::boolean_t>())
                                 continue;
-                            
+
                             auto zaddr = it.key();
                             auto txid  = QString::fromStdString(i["txid"].get<json::string_t>());
 
-                            // Lookup txid in the map
+                            // If there was nothing for this txid, then just move on. 
+                            if (!txidDetails->contains(txid))
+                                continue;
+
+                            // Lookup txid in the map                            
                             auto txidInfo = txidDetails->value(txid);
 
                             qint64 timestamp;
@@ -467,13 +485,14 @@ void RPC::refreshReceivedZTrans(QList<QString> zaddrs) {
 
                             TransactionItem tx{ QString("receive"), timestamp, zaddr, txid, amount, 
                                                 confirmations, "", memos.value(zaddr + txid, "") };
-                            txdata.push_front(tx);
+                            txdata->push_front(tx);
                         }
                     }
 
-                    transactionsTableModel->addZRecvData(txdata);
+                    transactionsTableModel->addZRecvData(*txdata);
 
                     // Cleanup both responses;
+                    delete txdata;
                     delete zaddrTxids;
                     delete txidDetails;
                 }

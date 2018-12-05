@@ -107,24 +107,21 @@ public:
     void doBatchRPC(const QList<T>& payloads,
                      std::function<json(T)> payloadGenerator,
                      std::function<void(QMap<T, json>*)> cb) {    
-        auto responses = new QMap<T, json>(); // zAddr -> list of responses for each call. 
+        // zAddr -> list of responses for each call. 
+        auto responses = new QMap<T, json>(); 
         int totalSize = payloads.size();
-        if (totalSize == 0)
+        if (totalSize == 0) {
+            cb(responses);
             return;
-
-        // Keep track of all pending method calls, so as to prevent 
-        // any overlapping calls
-        static QMap<QString, bool> inProgress;
+        }            
 
         QString method = QString::fromStdString(payloadGenerator(payloads[0])["method"]);
-        //if (inProgress.value(method, false)) {
-        //    qDebug() << "In progress batch, skipping";
-        //    return;
-        //}
+        qDebug() << "Starting " << method;
+        using milli = std::chrono::milliseconds;
+        auto start = std::chrono::high_resolution_clock::now();
 
         for (auto item: payloads) {
             json payload = payloadGenerator(item);
-            inProgress[method] = true;
             
             QNetworkReply *reply = restclient->post(*request, QByteArray::fromStdString(payload.dump()));
 
@@ -166,9 +163,12 @@ public:
                 waitTimer->stop();
                 
                 cb(responses);
-                inProgress[method] = false;
-
-                waitTimer->deleteLater();            
+                waitTimer->deleteLater();
+                
+                auto finish = std::chrono::high_resolution_clock::now();
+                std::cout << method.toStdString() << " batch took "
+                    << std::chrono::duration_cast<milli>(finish - start).count()
+                    << " milliseconds\n";
             }
         });
         waitTimer->start(100);    
