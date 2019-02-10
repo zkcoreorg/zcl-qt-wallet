@@ -7,11 +7,11 @@ param (
 )
 
 Write-Host "[Initializing]"
-Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-binaries-zec-qt-wallet-v$version.tar.gz
-Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-deb-zec-qt-wallet-v$version.deb
-Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-binaries-zec-qt-wallet-v$version.zip
-Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-installer-zec-qt-wallet-v$version.msi
-Remove-Item -Force -ErrorAction Ignore ./artifacts/macOS-zec-qt-wallet-v$version.dmg
+Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-binaries-zcl-qt-wallet-v$version.tar.gz
+Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-deb-zcl-qt-wallet-v$version.deb
+Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-binaries-zcl-qt-wallet-v$version.zip
+Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-installer-zcl-qt-wallet-v$version.msi
+Remove-Item -Force -ErrorAction Ignore ./artifacts/macOS-zcl-qt-wallet-v$version.dmg
 
 Remove-Item -Recurse -Force -ErrorAction Ignore ./bin
 Remove-Item -Recurse -Force -ErrorAction Ignore ./debug
@@ -25,7 +25,7 @@ Write-Host ""
 
 
 Write-Host "[Building on Mac]"
-bash src/scripts/mkmacdmg.sh --qt_path ~/Qt/5.11.1/clang_64/ --version $version --zcash_path ~/github/zcash 
+bash src/scripts/mkmacdmg.sh --qt_path ~/Qt/5.11.1/clang_64/ --version $version --zclassic_path ~/github/zclassic
 if (! $?) {
     Write-Output "[Error]"
     exit 1;
@@ -37,7 +37,7 @@ Write-Host "[Building Linux + Windows]"
 Write-Host -NoNewline "Copying files.........."
 ssh $server "rm -rf /tmp/zqwbuild"
 ssh $server "mkdir /tmp/zqwbuild"
-scp -r src/ res/ ./zec-qt-wallet.pro ./application.qrc ./LICENSE ./README.md ${server}:/tmp/zqwbuild/ | Out-Null
+scp -r src/ res/ ./zcl-qt-wallet.pro ./application.qrc ./LICENSE ./README.md ${server}:/tmp/zqwbuild/ | Out-Null
 ssh $server "dos2unix -q /tmp/zqwbuild/src/scripts/mkrelease.sh" | Out-Null
 ssh $server "dos2unix -q /tmp/zqwbuild/src/version.h"
 Write-Host "[OK]"
@@ -56,7 +56,7 @@ Write-Host -NoNewline "Building Installer....."
 ssh $winserver "Remove-Item -Path zqwbuild -Recurse"   | Out-Null
 ssh $winserver "New-Item zqwbuild -itemtype directory" | Out-Null
 
-# Note: For some mysterious reason, we can't seem to do a scp from here to windows machine. 
+# Note: For some mysterious reason, we can't seem to do a scp from here to windows machine.
 # So, we'll ssh to windows, and execute an scp command to pull files from here to there.
 # Same while copying the built msi. A straight scp pull from windows to here doesn't work,
 # so we ssh to windows, and then scp push the file to here.
@@ -78,11 +78,11 @@ Write-Host "[OK]"
 
 # Finally, test to make sure all files exist
 Write-Host -NoNewline "Checking Build........."
-if (! (Test-Path ./artifacts/linux-binaries-zec-qt-wallet-v$version.tar.gz) -or
-    ! (Test-Path ./artifacts/linux-deb-zec-qt-wallet-v$version.deb) -or
-    ! (Test-Path ./artifacts/Windows-binaries-zec-qt-wallet-v$version.zip) -or
-    ! (Test-Path ./artifacts/macOS-zec-qt-wallet-v$version.dmg) -or 
-    ! (Test-Path ./artifacts/Windows-installer-zec-qt-wallet-v$version.msi) ) {
+if (! (Test-Path ./artifacts/linux-binaries-zcl-qt-wallet-v$version.tar.gz) -or
+    ! (Test-Path ./artifacts/linux-deb-zcl-qt-wallet-v$version.deb) -or
+    ! (Test-Path ./artifacts/Windows-binaries-zcl-qt-wallet-v$version.zip) -or
+    ! (Test-Path ./artifacts/macOS-zcl-qt-wallet-v$version.dmg) -or
+    ! (Test-Path ./artifacts/Windows-installer-zcl-qt-wallet-v$version.msi) ) {
         Write-Host "[Error]"
         exit 1;
     }

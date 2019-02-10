@@ -2,7 +2,7 @@
 #include "mainwindow.h"
 #include "settings.h"
 #include "ui_connection.h"
-#include "ui_createzcashconfdialog.h"
+#include "ui_createzclassicconfdialog.h"
 #include "rpc.h"
 
 #include "precompiled.h"
@@ -20,7 +20,7 @@ ConnectionLoader::ConnectionLoader(MainWindow* main, RPC* rpc) {
     connD->topIcon->setBasePixmap(logo.scaled(256, 256, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
-ConnectionLoader::~ConnectionLoader() {    
+ConnectionLoader::~ConnectionLoader() {
     delete d;
     delete connD;
 }
@@ -30,79 +30,79 @@ void ConnectionLoader::loadConnection() {
     d->exec();
 }
 
-void ConnectionLoader::doAutoConnect(bool tryEzcashdStart) {
+void ConnectionLoader::doAutoConnect(bool tryEzclassicdStart) {
     // Priority 1: Ensure all params are present.
     if (!verifyParams()) {
         downloadParams([=]() { this->doAutoConnect(); });
         return;
     }
 
-    // Priority 2: Try to connect to detect zcash.conf and connect to it.
-    auto config = autoDetectZcashConf();
+    // Priority 2: Try to connect to detect zclassic.conf and connect to it.
+    auto config = autoDetectZclassicConf();
     main->logger->write(QObject::tr("Attempting autoconnect"));
 
     if (config.get() != nullptr) {
         auto connection = makeConnection(config);
 
-        refreshZcashdState(connection, [=] () {
-            // Refused connection. So try and start embedded zcashd
+        refreshZclassicdState(connection, [=] () {
+            // Refused connection. So try and start embedded zclassicd
             if (Settings::getInstance()->useEmbedded()) {
-                if (tryEzcashdStart) {
-                    this->showInformation(QObject::tr("Starting embedded zcashd"));
-                    if (this->startEmbeddedZcashd()) {
-                        // Embedded zcashd started up. Wait a second and then refresh the connection
-                        main->logger->write("Embedded zcashd started up, trying autoconnect in 1 sec");
+                if (tryEzclassicdStart) {
+                    this->showInformation(QObject::tr("Starting embedded zclassicd"));
+                    if (this->startEmbeddedZclassicd()) {
+                        // Embedded zclassicd started up. Wait a second and then refresh the connection
+                        main->logger->write("Embedded zclassicd started up, trying autoconnect in 1 sec");
                         QTimer::singleShot(1000, [=]() { doAutoConnect(); } );
                     } else {
-                        if (config->zcashDaemon) {
-                            // zcashd is configured to run as a daemon, so we must wait for a few seconds
-                            // to let it start up. 
-                            main->logger->write("zcashd is daemon=1. Waiting for it to start up");
-                            this->showInformation(QObject::tr("zcashd is set to run as daemon"), QObject::tr("Waiting for zcashd"));
-                            QTimer::singleShot(5000, [=]() { doAutoConnect(/* don't attempt to start ezcashd */ false); });
+                        if (config->zclassicDaemon) {
+                            // zclassicd is configured to run as a daemon, so we must wait for a few seconds
+                            // to let it start up.
+                            main->logger->write("zclassicd is daemon=1. Waiting for it to start up");
+                            this->showInformation(QObject::tr("zclassicd is set to run as daemon"), QObject::tr("Waiting for zclassicd"));
+                            QTimer::singleShot(5000, [=]() { doAutoConnect(/* don't attempt to start ezclassicd */ false); });
                         } else {
-                            // Something is wrong. 
+                            // Something is wrong.
                             // We're going to attempt to connect to the one in the background one last time
                             // and see if that works, else throw an error
-                            main->logger->write("Unknown problem while trying to start zcashd");
-                            QTimer::singleShot(2000, [=]() { doAutoConnect(/* don't attempt to start ezcashd */ false); });
+                            main->logger->write("Unknown problem while trying to start zclassicd");
+                            QTimer::singleShot(2000, [=]() { doAutoConnect(/* don't attempt to start ezclassicd */ false); });
                         }
                     }
                 } else {
-                    // We tried to start ezcashd previously, and it didn't work. So, show the error. 
-                    main->logger->write("Couldn't start embedded zcashd for unknown reason");
+                    // We tried to start ezclassicd previously, and it didn't work. So, show the error.
+                    main->logger->write("Couldn't start embedded zclassicd for unknown reason");
                     QString explanation;
-                    if (config->zcashDaemon) {
-                        explanation = QString() % QObject::tr("You have zcashd set to start as a daemon, which can cause problems "
-                            "with zec-qt-wallet\n\n."
-                            "Please remove the following line from your zcash.conf and restart zec-qt-wallet\n"
+                    if (config->zclassicDaemon) {
+                        explanation = QString() % QObject::tr("You have zclassicd set to start as a daemon, which can cause problems "
+                            "with zcl-qt-wallet\n\n."
+                            "Please remove the following line from your zclassic.conf and restart zcl-qt-wallet\n"
                             "daemon=1");
                     } else {
-                        explanation = QString() % QObject::tr("Couldn't start the embedded zcashd.\n\n" 
-                            "Please try restarting.\n\nIf you previously started zcashd with custom arguments, you might need to reset zcash.conf.\n\n" 
-                            "If all else fails, please run zcashd manually.") %  
-                            (ezcashd ? QObject::tr("The process returned") + ":\n\n" % ezcashd->errorString() : QString(""));
+                        explanation = QString() % QObject::tr("Couldn't start the embedded zclassicd.\n\n"
+                            "Please try restarting.\n\nIf you previously started zclassicd with custom arguments, you might need to reset zclassic.conf.\n\n"
+                            "If all else fails, please run zclassicd manually.") %
+                            (ezclassicd ? QObject::tr("The process returned") + ":\n\n" % ezclassicd->errorString() : QString(""));
                     }
-                    
+
                     this->showError(explanation);
-                }                
+                }
             } else {
-                // zcash.conf exists, there's no connection, and the user asked us not to start zcashd. Error!
-                main->logger->write("Not using embedded and couldn't connect to zcashd");
-                QString explanation = QString() % QObject::tr("Couldn't connect to zcashd configured in zcash.conf.\n\n" 
-                                      "Not starting embedded zcashd because --no-embedded was passed");
+                // zclassic.conf exists, there's no connection, and the user asked us not to start zclassicd. Error!
+                main->logger->write("Not using embedded and couldn't connect to zclassicd");
+                QString explanation = QString() % QObject::tr("Couldn't connect to zclassicd configured in zclassic.conf.\n\n"
+                                      "Not starting embedded zclassicd because --no-embedded was passed");
                 this->showError(explanation);
             }
         });
     } else {
         if (Settings::getInstance()->useEmbedded()) {
-            // zcash.conf was not found, so create one
-            createZcashConf();
+            // zclassic.conf was not found, so create one
+            createZclassicConf();
         } else {
             // Fall back to manual connect
             doManualConnect();
         }
-    } 
+    }
 }
 
 QString randomPassword() {
@@ -123,19 +123,19 @@ QString randomPassword() {
 }
 
 /**
- * This will create a new zcash.conf, download Zcash parameters.
- */ 
-void ConnectionLoader::createZcashConf() {
-    main->logger->write("createZcashConf");
+ * This will create a new zclassic.conf, download Zclassic parameters.
+ */
+void ConnectionLoader::createZclassicConf() {
+    main->logger->write("createZclassicConf");
 
-    auto confLocation = zcashConfWritableLocation();
+    auto confLocation = zclassicConfWritableLocation();
     QFileInfo fi(confLocation);
 
     QDialog d(main);
-    Ui_createZcashConf ui;
+    Ui_createZclassicConf ui;
     ui.setupUi(&d);
 
-    QPixmap logo(":/img/res/zcashdlogo.gif");
+    QPixmap logo(":/img/res/zclassicdlogo.gif");
     ui.lblTopIcon->setBasePixmap(logo.scaled(256, 256, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     ui.btnPickDir->setEnabled(false);
 
@@ -174,15 +174,15 @@ void ConnectionLoader::createZcashConf() {
 
     QFile file(confLocation);
     if (!file.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
-        main->logger->write("Could not create zcash.conf, returning");
+        main->logger->write("Could not create zclassic.conf, returning");
         return;
     }
-        
-    QTextStream out(&file); 
-    
+
+    QTextStream out(&file);
+
     out << "server=1\n";
     out << "addnode=mainnet.z.cash\n";
-    out << "rpcuser=zec-qt-wallet\n";
+    out << "rpcuser=zcl-qt-wallet\n";
     out << "rpcpassword=" % randomPassword() << "\n";
     if (!datadir.isEmpty()) {
         out << "datadir=" % datadir % "\n";
@@ -193,24 +193,24 @@ void ConnectionLoader::createZcashConf() {
 
     file.close();
 
-    // Now that zcash.conf exists, try to autoconnect again
+    // Now that zclassic.conf exists, try to autoconnect again
     this->doAutoConnect();
 }
 
 
-void ConnectionLoader::downloadParams(std::function<void(void)> cb) {    
+void ConnectionLoader::downloadParams(std::function<void(void)> cb) {
     main->logger->write("Adding params to download queue");
     // Add all the files to the download queue
     downloadQueue = new QQueue<QUrl>();
-    client = new QNetworkAccessManager(main);   
-    
+    client = new QNetworkAccessManager(main);
+
     downloadQueue->enqueue(QUrl("https://z.cash/downloads/sapling-output.params"));
-    downloadQueue->enqueue(QUrl("https://z.cash/downloads/sapling-spend.params"));    
+    downloadQueue->enqueue(QUrl("https://z.cash/downloads/sapling-spend.params"));
     downloadQueue->enqueue(QUrl("https://z.cash/downloads/sprout-proving.key"));
     downloadQueue->enqueue(QUrl("https://z.cash/downloads/sprout-verifying.key"));
     downloadQueue->enqueue(QUrl("https://z.cash/downloads/sprout-groth16.params"));
 
-    doNextDownload(cb);    
+    doNextDownload(cb);
 }
 
 void ConnectionLoader::doNextDownload(std::function<void(void)> cb) {
@@ -235,7 +235,7 @@ void ConnectionLoader::doNextDownload(std::function<void(void)> cb) {
     int filesRemaining = downloadQueue->size();
 
     QString filename = fnSaveFileName(url);
-    QString paramsDir = zcashParamsDir();
+    QString paramsDir = zclassicParamsDir();
 
     if (QFile(QDir(paramsDir).filePath(filename)).exists()) {
         main->logger->write(filename + " already exists, skipping");
@@ -245,7 +245,7 @@ void ConnectionLoader::doNextDownload(std::function<void(void)> cb) {
     }
 
     // The downloaded file is written to a new name, and then renamed when the operation completes.
-    currentOutput = new QFile(QDir(paramsDir).filePath(filename + ".part"));   
+    currentOutput = new QFile(QDir(paramsDir).filePath(filename + ".part"));
 
     if (!currentOutput->open(QIODevice::WriteOnly)) {
         main->logger->write("Couldn't open " + currentOutput->fileName() + " for writing");
@@ -253,12 +253,12 @@ void ConnectionLoader::doNextDownload(std::function<void(void)> cb) {
     }
     main->logger->write("Downloading to " + filename);
     qDebug() << "Downloading " << url << " to " << filename;
-    
+
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     currentDownload = client->get(request);
     downloadTime.start();
-    
+
     // Download Progress
     QObject::connect(currentDownload, &QNetworkReply::downloadProgress, [=] (auto done, auto total) {
         // calculate the download speed
@@ -278,7 +278,7 @@ void ConnectionLoader::doNextDownload(std::function<void(void)> cb) {
             QObject::tr("Downloading ") % filename % (filesRemaining > 1 ? " ( +" % QString::number(filesRemaining)  % QObject::tr(" more remaining )") : QString("")),
             QString::number(done/1024/1024, 'f', 0) % QObject::tr("MB of ") % QString::number(total/1024/1024, 'f', 0) + QObject::tr("MB at ") % QString::number(speed, 'f', 2) % unit);
     });
-    
+
     // Download Finished
     QObject::connect(currentDownload, &QNetworkReply::finished, [=] () {
         // Rename file
@@ -291,85 +291,85 @@ void ConnectionLoader::doNextDownload(std::function<void(void)> cb) {
 
         if (currentDownload->error()) {
             main->logger->write("Downloading " + filename + " failed");
-            this->showError(QObject::tr("Downloading ") + filename + QObject::tr(" failed. Please check the help site for more info"));                
+            this->showError(QObject::tr("Downloading ") + filename + QObject::tr(" failed. Please check the help site for more info"));
         } else {
             doNextDownload(cb);
         }
     });
 
-    // Download new data available. 
+    // Download new data available.
     QObject::connect(currentDownload, &QNetworkReply::readyRead, [=] () {
         currentOutput->write(currentDownload->readAll());
-    });    
+    });
 }
 
-bool ConnectionLoader::startEmbeddedZcashd() {
-    if (!Settings::getInstance()->useEmbedded()) 
+bool ConnectionLoader::startEmbeddedZclassicd() {
+    if (!Settings::getInstance()->useEmbedded())
         return false;
-    
-    main->logger->write("Trying to start embedded zcashd");
+
+    main->logger->write("Trying to start embedded zclassicd");
 
     // Static because it needs to survive even after this method returns.
     static QString processStdErrOutput;
 
-    if (ezcashd != nullptr) {
-        if (ezcashd->state() == QProcess::NotRunning) {
+    if (ezclassicd != nullptr) {
+        if (ezclassicd->state() == QProcess::NotRunning) {
             if (!processStdErrOutput.isEmpty()) {
-                QMessageBox::critical(main, QObject::tr("zcashd error"), "zcashd said: " + processStdErrOutput, 
+                QMessageBox::critical(main, QObject::tr("zclassicd error"), "zclassicd said: " + processStdErrOutput,
                                       QMessageBox::Ok);
             }
             return false;
         } else {
             return true;
-        }        
+        }
     }
 
-    // Finally, start zcashd    
+    // Finally, start zclassicd
     QDir appPath(QCoreApplication::applicationDirPath());
 #ifdef Q_OS_LINUX
-    auto zcashdProgram = appPath.absoluteFilePath("zqw-zcashd");
-    if (!QFile(zcashdProgram).exists()) {
-        zcashdProgram = appPath.absoluteFilePath("zcashd");
+    auto zclassicdProgram = appPath.absoluteFilePath("zqw-zclassicd");
+    if (!QFile(zclassicdProgram).exists()) {
+        zclassicdProgram = appPath.absoluteFilePath("zclassicd");
     }
 #elif defined(Q_OS_DARWIN)
-    auto zcashdProgram = appPath.absoluteFilePath("zcashd");
+    auto zclassicdProgram = appPath.absoluteFilePath("zclassicd");
 #else
-    auto zcashdProgram = appPath.absoluteFilePath("zcashd.exe");
+    auto zclassicdProgram = appPath.absoluteFilePath("zclassicd.exe");
 #endif
-    
-    if (!QFile(zcashdProgram).exists()) {
-        qDebug() << "Can't find zcashd at " << zcashdProgram;
-        main->logger->write("Can't find zcashd at " + zcashdProgram); 
+
+    if (!QFile(zclassicdProgram).exists()) {
+        qDebug() << "Can't find zclassicd at " << zclassicdProgram;
+        main->logger->write("Can't find zclassicd at " + zclassicdProgram);
         return false;
     }
 
-    ezcashd = new QProcess(main);    
-    QObject::connect(ezcashd, &QProcess::started, [=] () {
-        //qDebug() << "zcashd started";
+    ezclassicd = new QProcess(main);
+    QObject::connect(ezclassicd, &QProcess::started, [=] () {
+        //qDebug() << "zclassicd started";
     });
 
-    QObject::connect(ezcashd, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+    QObject::connect(ezclassicd, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
                         [=](int, QProcess::ExitStatus) {
-        //qDebug() << "zcashd finished with code " << exitCode << "," << exitStatus;    
+        //qDebug() << "zclassicd finished with code " << exitCode << "," << exitStatus;
     });
 
-    QObject::connect(ezcashd, &QProcess::errorOccurred, [&] (auto) {
-        //qDebug() << "Couldn't start zcashd: " << error;
+    QObject::connect(ezclassicd, &QProcess::errorOccurred, [&] (auto) {
+        //qDebug() << "Couldn't start zclassicd: " << error;
     });
 
-    QObject::connect(ezcashd, &QProcess::readyReadStandardError, [=]() {
-        auto output = ezcashd->readAllStandardError();
-       main->logger->write("zcashd stderr:" + output);
+    QObject::connect(ezclassicd, &QProcess::readyReadStandardError, [=]() {
+        auto output = ezclassicd->readAllStandardError();
+       main->logger->write("zclassicd stderr:" + output);
         processStdErrOutput.append(output);
     });
 
 #ifdef Q_OS_LINUX
-    ezcashd->start(zcashdProgram);
+    ezclassicd->start(zclassicdProgram);
 #elif defined(Q_OS_DARWIN)
-    ezcashd->start(zcashdProgram);
+    ezclassicd->start(zclassicdProgram);
 #else
-    ezcashd->setWorkingDirectory(appPath.absolutePath());
-    ezcashd->start("zcashd.exe");
+    ezclassicd->setWorkingDirectory(appPath.absolutePath());
+    ezclassicd->start("zclassicd.exe");
 #endif // Q_OS_LINUX
 
 
@@ -392,9 +392,9 @@ void ConnectionLoader::doManualConnect() {
     }
 
     auto connection = makeConnection(config);
-    refreshZcashdState(connection, [=] () {
+    refreshZclassicdState(connection, [=] () {
         QString explanation = QString()
-                % QObject::tr("Could not connect to zcashd configured in settings.\n\n" 
+                % QObject::tr("Could not connect to zclassicd configured in settings.\n\n"
                 "Please set the host/port and user/password in the Edit->Settings menu.");
 
         showError(explanation);
@@ -405,9 +405,9 @@ void ConnectionLoader::doManualConnect() {
 }
 
 void ConnectionLoader::doRPCSetConnection(Connection* conn) {
-    rpc->setEZcashd(ezcashd);
+    rpc->setEZclassicd(ezclassicd);
     rpc->setConnection(conn);
-    
+
     d->accept();
 
     delete this;
@@ -415,7 +415,7 @@ void ConnectionLoader::doRPCSetConnection(Connection* conn) {
 
 Connection* ConnectionLoader::makeConnection(std::shared_ptr<ConnectionConfig> config) {
     QNetworkAccessManager* client = new QNetworkAccessManager(main);
-         
+
     QUrl myurl;
     myurl.setScheme("http");
     myurl.setHost(config.get()->host);
@@ -424,15 +424,15 @@ Connection* ConnectionLoader::makeConnection(std::shared_ptr<ConnectionConfig> c
     QNetworkRequest* request = new QNetworkRequest();
     request->setUrl(myurl);
     request->setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
-    
+
     QString userpass = config.get()->rpcuser % ":" % config.get()->rpcpassword;
     QString headerData = "Basic " + userpass.toLocal8Bit().toBase64();
-    request->setRawHeader("Authorization", headerData.toLocal8Bit());    
+    request->setRawHeader("Authorization", headerData.toLocal8Bit());
 
     return new Connection(main, client, request, config);
 }
 
-void ConnectionLoader::refreshZcashdState(Connection* connection, std::function<void(void)> refused) {
+void ConnectionLoader::refreshZclassicdState(Connection* connection, std::function<void(void)> refused) {
     json payload = {
         {"jsonrpc", "1.0"},
         {"id", "someid"},
@@ -440,25 +440,25 @@ void ConnectionLoader::refreshZcashdState(Connection* connection, std::function<
     };
     connection->doRPC(payload,
         [=] (auto) {
-            // Success, hide the dialog if it was shown. 
+            // Success, hide the dialog if it was shown.
             d->hide();
             this->doRPCSetConnection(connection);
         },
-        [=] (auto reply, auto res) {            
-            // Failed, see what it is. 
+        [=] (auto reply, auto res) {
+            // Failed, see what it is.
             auto err = reply->error();
             //qDebug() << err << ":" << QString::fromStdString(res.dump());
 
-            if (err == QNetworkReply::NetworkError::ConnectionRefusedError) {   
+            if (err == QNetworkReply::NetworkError::ConnectionRefusedError) {
                 refused();
             } else if (err == QNetworkReply::NetworkError::AuthenticationRequiredError) {
                 main->logger->write("Authentication failed");
-                QString explanation = QString() % 
+                QString explanation = QString() %
                         QObject::tr("Authentication failed. The username / password you specified was "
-                        "not accepted by zcashd. Try changing it in the Edit->Settings menu");
+                        "not accepted by zclassicd. Try changing it in the Edit->Settings menu");
 
                 this->showError(explanation);
-            } else if (err == QNetworkReply::NetworkError::InternalServerError && 
+            } else if (err == QNetworkReply::NetworkError::InternalServerError &&
                     !res.is_discarded()) {
                 // The server is loading, so just poll until it succeeds
                 QString status    = QString::fromStdString(res["error"]["message"]);
@@ -469,10 +469,10 @@ void ConnectionLoader::refreshZcashdState(Connection* connection, std::function<
                     if (dots > 3)
                         dots = 0;
                 }
-                this->showInformation(QObject::tr("Your zcashd is starting up. Please wait."), status);
-                main->logger->write("Waiting for zcashd to come online.");
+                this->showInformation(QObject::tr("Your zclassicd is starting up. Please wait."), status);
+                main->logger->write("Waiting for zclassicd to come online.");
                 // Refresh after one second
-                QTimer::singleShot(1000, [=]() { this->refreshZcashdState(connection, refused); });
+                QTimer::singleShot(1000, [=]() { this->refreshZclassicdState(connection, refused); });
             }
         }
     );
@@ -484,49 +484,49 @@ void ConnectionLoader::showInformation(QString info, QString detail) {
 }
 
 /**
- * Show error will close the loading dialog and show an error. 
+ * Show error will close the loading dialog and show an error.
 */
-void ConnectionLoader::showError(QString explanation) {    
-    rpc->setEZcashd(nullptr);
+void ConnectionLoader::showError(QString explanation) {
+    rpc->setEZclassicd(nullptr);
     rpc->noConnection();
 
     QMessageBox::critical(main, QObject::tr("Connection Error"), explanation, QMessageBox::Ok);
     d->close();
 }
 
-QString ConnectionLoader::locateZcashConfFile() {
+QString ConnectionLoader::locateZclassicConfFile() {
 #ifdef Q_OS_LINUX
-    auto confLocation = QStandardPaths::locate(QStandardPaths::HomeLocation, ".zcash/zcash.conf");
+    auto confLocation = QStandardPaths::locate(QStandardPaths::HomeLocation, ".zclassic/zclassic.conf");
 #elif defined(Q_OS_DARWIN)
-    auto confLocation = QStandardPaths::locate(QStandardPaths::HomeLocation, "Library/Application Support/Zcash/zcash.conf");
+    auto confLocation = QStandardPaths::locate(QStandardPaths::HomeLocation, "Library/Application Support/Zclassic/zclassic.conf");
 #else
-    auto confLocation = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../../Zcash/zcash.conf");
+    auto confLocation = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../../Zclassic/zclassic.conf");
 #endif
 
-    main->logger->write("Found zcashconf at " + QDir::cleanPath(confLocation));
+    main->logger->write("Found zclassicconf at " + QDir::cleanPath(confLocation));
     return QDir::cleanPath(confLocation);
 }
 
-QString ConnectionLoader::zcashConfWritableLocation() {
+QString ConnectionLoader::zclassicConfWritableLocation() {
 #ifdef Q_OS_LINUX
-    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".zcash/zcash.conf");
+    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".zclassic/zclassic.conf");
 #elif defined(Q_OS_DARWIN)
-    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath("Library/Application Support/Zcash/zcash.conf");
+    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath("Library/Application Support/Zclassic/zclassic.conf");
 #else
-    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("../../Zcash/zcash.conf");
+    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("../../Zclassic/zclassic.conf");
 #endif
 
-    main->logger->write("Found zcashconf at " + QDir::cleanPath(confLocation));
+    main->logger->write("Found zclassicconf at " + QDir::cleanPath(confLocation));
     return QDir::cleanPath(confLocation);
 }
 
-QString ConnectionLoader::zcashParamsDir() {
+QString ConnectionLoader::zclassicParamsDir() {
     #ifdef Q_OS_LINUX
-    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".zcash-params"));
+    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".zclassic-params"));
 #elif defined(Q_OS_DARWIN)
-    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath("Library/Application Support/ZcashParams"));
+    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath("Library/Application Support/ZclassicParams"));
 #else
-    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("../../ZcashParams"));
+    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("../../ZclassicParams"));
 #endif
 
     if (!paramsLocation.exists()) {
@@ -534,12 +534,12 @@ QString ConnectionLoader::zcashParamsDir() {
         QDir().mkpath(paramsLocation.absolutePath());
     }
 
-    main->logger->write("Found Zcash params directory at " + paramsLocation.absolutePath());
+    main->logger->write("Found Zclassic params directory at " + paramsLocation.absolutePath());
     return paramsLocation.absolutePath();
 }
 
 bool ConnectionLoader::verifyParams() {
-    QDir paramsDir(zcashParamsDir());
+    QDir paramsDir(zclassicParamsDir());
 
     if (!QFile(paramsDir.filePath("sapling-output.params")).exists()) return false;
     if (!QFile(paramsDir.filePath("sapling-spend.params")).exists()) return false;
@@ -551,13 +551,13 @@ bool ConnectionLoader::verifyParams() {
 }
 
 /**
- * Try to automatically detect a zcash.conf file in the correct location and load parameters
- */ 
-std::shared_ptr<ConnectionConfig> ConnectionLoader::autoDetectZcashConf() {    
-    auto confLocation = locateZcashConfFile();
+ * Try to automatically detect a zclassic.conf file in the correct location and load parameters
+ */
+std::shared_ptr<ConnectionConfig> ConnectionLoader::autoDetectZclassicConf() {
+    auto confLocation = locateZclassicConfFile();
 
     if (confLocation.isNull()) {
-        // No Zcash file, just return with nothing
+        // No Zclassic file, just return with nothing
         return nullptr;
     }
 
@@ -569,14 +569,14 @@ std::shared_ptr<ConnectionConfig> ConnectionLoader::autoDetectZcashConf() {
 
     QTextStream in(&file);
 
-    auto zcashconf = new ConnectionConfig();
-    zcashconf->host     = "127.0.0.1";
-    zcashconf->connType = ConnectionType::DetectedConfExternalZcashD;
-    zcashconf->usingZcashConf = true;
-    zcashconf->zcashDir = QFileInfo(confLocation).absoluteDir().absolutePath();
-    zcashconf->zcashDaemon = false;
+    auto zclassicconf = new ConnectionConfig();
+    zclassicconf->host     = "127.0.0.1";
+    zclassicconf->connType = ConnectionType::DetectedConfExternalZclassicD;
+    zclassicconf->usingZclassicConf = true;
+    zclassicconf->zclassicDir = QFileInfo(confLocation).absoluteDir().absolutePath();
+    zclassicconf->zclassicDaemon = false;
 
-    Settings::getInstance()->setUsingZcashConf(confLocation);
+    Settings::getInstance()->setUsingZclassicConf(confLocation);
 
     while (!in.atEnd()) {
         QString line = in.readLine();
@@ -585,52 +585,52 @@ std::shared_ptr<ConnectionConfig> ConnectionLoader::autoDetectZcashConf() {
         QString value = line.right(line.length() - s - 1).trimmed();
 
         if (name == "rpcuser") {
-            zcashconf->rpcuser = value;
+            zclassicconf->rpcuser = value;
         }
         if (name == "rpcpassword") {
-            zcashconf->rpcpassword = value;
+            zclassicconf->rpcpassword = value;
         }
         if (name == "rpcport") {
-            zcashconf->port = value;
+            zclassicconf->port = value;
         }
         if (name == "daemon" && value == "1") {
-            zcashconf->zcashDaemon = true;
+            zclassicconf->zclassicDaemon = true;
         }
         if (name == "proxy") {
-            zcashconf->proxy = value;
+            zclassicconf->proxy = value;
         }
         if (name == "testnet" &&
             value == "1"  &&
-            zcashconf->port.isEmpty()) {
-                zcashconf->port = "18232";
+            zclassicconf->port.isEmpty()) {
+                zclassicconf->port = "18232";
         }
     }
 
     // If rpcport is not in the file, and it was not set by the testnet=1 flag, then go to default
-    if (zcashconf->port.isEmpty()) zcashconf->port = "8232";
+    if (zclassicconf->port.isEmpty()) zclassicconf->port = "8232";
     file.close();
 
-    // In addition to the zcash.conf file, also double check the params. 
+    // In addition to the zclassic.conf file, also double check the params.
 
-    return std::shared_ptr<ConnectionConfig>(zcashconf);
+    return std::shared_ptr<ConnectionConfig>(zclassicconf);
 }
 
 /**
- * Load connection settings from the UI, which indicates an unknown, external zcashd
- */ 
+ * Load connection settings from the UI, which indicates an unknown, external zclassicd
+ */
 std::shared_ptr<ConnectionConfig> ConnectionLoader::loadFromSettings() {
-    // Load from the QT Settings. 
+    // Load from the QT Settings.
     QSettings s;
-    
+
     auto host        = s.value("connection/host").toString();
     auto port        = s.value("connection/port").toString();
     auto username    = s.value("connection/rpcuser").toString();
-    auto password    = s.value("connection/rpcpassword").toString();    
+    auto password    = s.value("connection/rpcpassword").toString();
 
     if (username.isEmpty() || password.isEmpty())
         return nullptr;
 
-    auto uiConfig = new ConnectionConfig{ host, port, username, password, false, false, "", "", ConnectionType::UISettingsZCashD};
+    auto uiConfig = new ConnectionConfig{ host, port, username, password, false, false, "", "", ConnectionType::UISettingsZclassicD};
 
     return std::shared_ptr<ConnectionConfig>(uiConfig);
 }
@@ -641,8 +641,8 @@ std::shared_ptr<ConnectionConfig> ConnectionLoader::loadFromSettings() {
 
 /***********************************************************************************
  *  Connection Class
- ************************************************************************************/ 
-Connection::Connection(MainWindow* m, QNetworkAccessManager* c, QNetworkRequest* r, 
+ ************************************************************************************/
+Connection::Connection(MainWindow* m, QNetworkAccessManager* c, QNetworkRequest* r,
                         std::shared_ptr<ConnectionConfig> conf) {
     this->restclient  = c;
     this->request     = r;
@@ -655,7 +655,7 @@ Connection::~Connection() {
     delete request;
 }
 
-void Connection::doRPC(const json& payload, const std::function<void(json)>& cb, 
+void Connection::doRPC(const json& payload, const std::function<void(json)>& cb,
                        const std::function<void(QNetworkReply*, const json&)>& ne) {
     if (shutdownInProgress) {
         // Ignoring RPC because shutdown in progress
@@ -670,27 +670,27 @@ void Connection::doRPC(const json& payload, const std::function<void(json)>& cb,
             // Ignoring callback because shutdown in progress
             return;
         }
-        
+
         if (reply->error() != QNetworkReply::NoError) {
             auto parsed = json::parse(reply->readAll(), nullptr, false);
             ne(reply, parsed);
-            
+
             return;
-        } 
-        
+        }
+
         auto parsed = json::parse(reply->readAll(), nullptr, false);
         if (parsed.is_discarded()) {
             ne(reply, "Unknown error");
         }
-        
-        cb(parsed["result"]);        
+
+        cb(parsed["result"]);
     });
 }
 
 void Connection::doRPCWithDefaultErrorHandling(const json& payload, const std::function<void(json)>& cb) {
     doRPC(payload, cb, [=] (auto reply, auto parsed) {
         if (!parsed.is_discarded() && !parsed["error"]["message"].is_null()) {
-            this->showTxError(QString::fromStdString(parsed["error"]["message"]));    
+            this->showTxError(QString::fromStdString(parsed["error"]["message"]));
         } else {
             this->showTxError(reply->errorString());
         }
@@ -719,7 +719,7 @@ void Connection::showTxError(const QString& error) {
 
 /**
  * Prevent all future calls from going through
- */ 
+ */
 void Connection::shutdown() {
     shutdownInProgress = true;
 }

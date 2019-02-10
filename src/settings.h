@@ -24,10 +24,10 @@ public:
 
     bool    isTestnet();
     void    setTestnet(bool isTestnet);
-            
+
     bool    isSaplingAddress(QString addr);
     bool    isSproutAddress(QString addr);
-            
+
     bool    isSyncing();
     void    setSyncing(bool syncing);
 
@@ -36,7 +36,7 @@ public:
 
     int     getBlockNumber();
     void    setBlockNumber(int number);
-            
+
     bool    getSaveZtxs();
     void    setSaveZtxs(bool save);
 
@@ -45,21 +45,21 @@ public:
 
     bool    getAllowCustomFees();
     void    setAllowCustomFees(bool allow);
-            
+
     bool    isSaplingActive();
 
-    void    setUsingZcashConf(QString confLocation);
-    const   QString& getZcashdConfLocation() { return _confLocation; }
+    void    setUsingZclassicConf(QString confLocation);
+    const   QString& getZclassicdConfLocation() { return _confLocation; }
 
-    void    setZECPrice(double p) { zecPrice = p; }
-    double  getZECPrice();
+    void    setZCLPrice(double p) { zclPrice = p; }
+    double  getZCLPrice();
 
     void    setPeers(int peers);
     int     getPeers();
-       
+
     // Static stuff
     static const QString txidStatusMessage;
-    
+
     static void saveRestore(QDialog* d);
 
     static bool    isZAddress(QString addr);
@@ -67,8 +67,8 @@ public:
 
     static QString getDecimalString(double amt);
     static QString getUSDFormat(double bal);
-    static QString getZECDisplayFormat(double bal);
-    static QString getZECUSDDisplayFormat(double bal);
+    static QString getZCLDisplayFormat(double bal);
+    static QString getZCLUSDDisplayFormat(double bal);
 
     static QString getTokenName();
     static QString getDonationAddr(bool sapling);
@@ -76,11 +76,11 @@ public:
     static double  getMinerFee();
     static double  getZboardAmount();
     static QString getZboardAddr();
-    
+
     static bool    isValidAddress(QString addr);
 
-    static bool    addToZcashConf(QString confLocation, QString line);
-    static bool    removeFromZcashConf(QString confLocation, QString option);
+    static bool    addToZclassicConf(QString confLocation, QString line);
+    static bool    removeFromZclassicConf(QString confLocation, QString option);
 
     static const QString labelRegExp;
 
@@ -102,7 +102,7 @@ private:
     int     _blockNumber      = 0;
     bool    _useEmbedded      = false;
     int     _peerConnections  = 0;
-    double zecPrice = 0.0;
+    double zclPrice = 0.0;
 };
 
 #endif // SETTINGS_H

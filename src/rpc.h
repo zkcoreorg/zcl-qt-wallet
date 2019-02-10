@@ -38,18 +38,18 @@ public:
     ~RPC();
 
     void setConnection(Connection* c);
-    void setEZcashd(QProcess* p);
-    const QProcess* getEZcashD() { return ezcashd; }
+    void setEZclassicd(QProcess* p);
+    const QProcess* getEZclassicD() { return ezclassicd; }
 
     void refresh(bool force = false);
 
-    void refreshAddresses();    
-    
+    void refreshAddresses();
+
     void checkForUpdate(bool silent = true);
-    void refreshZECPrice();
+    void refreshZCLPrice();
     void getZboardTopics(std::function<void(QMap<QString, QString>)> cb);
 
-    void executeTransaction(Tx tx, 
+    void executeTransaction(Tx tx,
         const std::function<void(QString opid)> submitted,
         const std::function<void(QString opid, QString txid)> computed,
         const std::function<void(QString opid, QString errStr)> error);
@@ -57,7 +57,7 @@ public:
     void fillTxJsonParams(json& params, Tx tx);
     void sendZTransaction(json params, const std::function<void(json)>& cb, const std::function<void(QString)>& err);
     void watchTxStatus();
-    void addNewTxToWatch(const QString& newOpid, WatchedTx wtx); 
+    void addNewTxToWatch(const QString& newOpid, WatchedTx wtx);
 
     const TxTableModel*               getTransactionsModel() { return transactionsTableModel; }
     const QList<QString>*             getAllZAddresses()     { return zaddresses; }
@@ -73,7 +73,7 @@ public:
     void importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
     void importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
 
-    void shutdownZcashd();
+    void shutdownZclassicd();
     void noConnection();
 
     QString getDefaultSaplingAddress();
@@ -86,7 +86,7 @@ public:
 private:
     void refreshBalances();
 
-    void refreshTransactions();    
+    void refreshTransactions();
     void refreshSentZTrans();
     void refreshReceivedZTrans(QList<QString> zaddresses);
 
@@ -103,13 +103,13 @@ private:
     void getZAddresses          (const std::function<void(json)>& cb);
 
     Connection*                 conn                        = nullptr;
-    QProcess*                   ezcashd                     = nullptr;
+    QProcess*                   ezclassicd                     = nullptr;
 
     QList<UnspentOutput>*       utxos                       = nullptr;
     QMap<QString, double>*      allBalances                 = nullptr;
     QMap<QString, bool>*        usedAddresses               = nullptr;
     QList<QString>*             zaddresses                  = nullptr;
-    
+
     QMap<QString, WatchedTx>    watchingOps;
 
     TxTableModel*               transactionsTableModel      = nullptr;

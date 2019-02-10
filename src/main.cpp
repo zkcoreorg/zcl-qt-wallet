@@ -11,15 +11,15 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    QCoreApplication::setOrganizationName("zec-qt-wallet-org");
-    QCoreApplication::setApplicationName("zec-qt-wallet");
+    QCoreApplication::setOrganizationName("zcl-qt-wallet-org");
+    QCoreApplication::setApplicationName("zcl-qt-wallet");
 
     QString locale = QLocale::system().name();
     locale.truncate(locale.lastIndexOf('_'));   // Get the language code
     qDebug() << "Loading locale " << locale;
-    
+
     QTranslator translator;
-    translator.load(QString(":/translations/res/zec_qt_wallet_") + locale);
+    translator.load(QString(":/translations/res/zcl_qt_wallet_") + locale);
     a.installTranslator(&translator);
 
     QIcon icon(":/icons/res/icon.ico");
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     unsigned int seed = QRandomGenerator::securelySeeded().generate();
 #else
-    // This will be used only during debugging for compatibility reasons 
+    // This will be used only during debugging for compatibility reasons
     unsigned int seed = std::time(0);
 #endif
     std::srand(seed);
@@ -48,8 +48,8 @@ int main(int argc, char *argv[])
     }
 
     MainWindow w;
-    w.setWindowTitle("zec-qt-wallet v" + QString(APP_VERSION));
+    w.setWindowTitle("zcl-qt-wallet v" + QString(APP_VERSION));
     w.show();
-    
+
     return QApplication::exec();
 }

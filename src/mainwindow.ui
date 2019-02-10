@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zec-qt-wallet</string>
+   <string>zcl-qt-wallet</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../application.qrc">
@@ -882,13 +882,13 @@
       </widget>
       <widget class="QWidget" name="tab_5">
        <attribute name="title">
-        <string>zcashd</string>
+        <string>zclassicd</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_14">
           <item>
-           <widget class="FilledIconLabel" name="zcashdlogo">
+           <widget class="FilledIconLabel" name="zclassicdlogo">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -1148,7 +1148,7 @@
   </action>
   <action name="actionPay_URI">
    <property name="text">
-    <string>Pay zcash &amp;URI...</string>
+    <string>Pay zclassic &amp;URI...</string>
    </property>
   </action>
  </widget>

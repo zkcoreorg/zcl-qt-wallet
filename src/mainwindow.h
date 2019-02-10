@@ -10,7 +10,7 @@ class Settings;
 
 using json = nlohmann::json;
 
-// Struct used to hold destination info when sending a Tx. 
+// Struct used to hold destination info when sending a Tx.
 struct ToFields {
     QString addr;
     double  amount;
@@ -18,7 +18,7 @@ struct ToFields {
     QString encodedMemo;
 };
 
-// Struct used to represent a Transaction. 
+// Struct used to represent a Transaction.
 struct Tx {
     QString         fromAddr;
     QList<ToFields> toAddrs;
@@ -47,17 +47,17 @@ public:
     QLabel*             statusLabel;
     QLabel*             statusIcon;
     QLabel*             loadingLabel;
-    QWidget*            zcashdtab;
+    QWidget*            zclassicdtab;
 
     Logger*      logger;
-private:    
+private:
     void closeEvent(QCloseEvent* event);
 
     void setupSendTab();
     void setupTransactionsTab();
     void setupRecieveTab();
     void setupBalancesTab();
-    void setupZcashdTab();
+    void setupZclassicdTab();
 
     void setupTurnstileDialog();
     void setupSettingsModal();
@@ -92,7 +92,7 @@ private:
 
     void donate();
     void addressBook();
-    void payZcashURI();
+    void payZclassicURI();
     void postToZBoard();
     void importPrivKey();
     void exportAllKeys();

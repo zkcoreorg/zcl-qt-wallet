@@ -55,7 +55,7 @@ bool TxTableModel::exportToCsv(QString fileName) const {
     }
     out << "\"Memo\"";
     out << endl;
-    
+
     // Write out each row
     for (int row = 0; row < modeldata->length(); row++) {
         for (int col = 0; col < headers.length(); col++) {
@@ -70,7 +70,7 @@ bool TxTableModel::exportToCsv(QString fileName) const {
     return true;
 }
 
-void TxTableModel::updateAllData() {    
+void TxTableModel::updateAllData() {
     auto newmodeldata = new QList<TransactionItem>();
 
     if (tTrans  != nullptr) std::copy( tTrans->begin(),  tTrans->end(), std::back_inserter(*newmodeldata));
@@ -106,7 +106,7 @@ void TxTableModel::updateAllData() {
  {
      // Align column 4 (amount) right
     if (role == Qt::TextAlignmentRole && index.column() == 3) return QVariant(Qt::AlignRight | Qt::AlignVCenter);
-    
+
     if (role == Qt::ForegroundRole) {
         if (modeldata->at(index.row()).confirmations == 0) {
             QBrush b;
@@ -117,45 +117,45 @@ void TxTableModel::updateAllData() {
         // Else, just return the default brush
         QBrush b;
         b.setColor(Qt::black);
-        return b;        
+        return b;
     }
 
     auto dat = modeldata->at(index.row());
     if (role == Qt::DisplayRole) {
         switch (index.column()) {
         case 0: return dat.type;
-        case 1: { 
+        case 1: {
                     auto addr = modeldata->at(index.row()).address;
-                    if (addr.trimmed().isEmpty()) 
+                    if (addr.trimmed().isEmpty())
                         return "(Shielded)";
-                    else 
+                    else
                         return addr;
                 }
         case 2: return QDateTime::fromMSecsSinceEpoch(modeldata->at(index.row()).datetime *  (qint64)1000).toLocalTime().toString();
-        case 3: return Settings::getZECDisplayFormat(modeldata->at(index.row()).amount);
+        case 3: return Settings::getZCLDisplayFormat(modeldata->at(index.row()).amount);
         }
-    } 
+    }
 
     if (role == Qt::ToolTipRole) {
         switch (index.column()) {
-        case 0: return modeldata->at(index.row()).type + 
+        case 0: return modeldata->at(index.row()).type +
                     (dat.memo.isEmpty() ? "" : " tx memo: \"" + dat.memo + "\"");
-        case 1: { 
+        case 1: {
                     auto addr = modeldata->at(index.row()).address;
-                    if (addr.trimmed().isEmpty()) 
+                    if (addr.trimmed().isEmpty())
                         return "(Shielded)";
-                    else 
+                    else
                         return addr;
                 }
         case 2: return QDateTime::fromMSecsSinceEpoch(modeldata->at(index.row()).datetime * (qint64)1000).toLocalTime().toString();
         case 3: return Settings::getInstance()->getUSDFormat(modeldata->at(index.row()).amount);
-        }    
+        }
     }
 
     if (role == Qt::DecorationRole && index.column() == 0) {
         if (!dat.memo.isEmpty()) {
             // Return the info pixmap to indicate memo
-            QIcon icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);            
+            QIcon icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
             return QVariant(icon.pixmap(16, 16));
         } else {
             // Empty pixmap to make it align

@@ -12,7 +12,7 @@ PRECOMPILED_HEADER = src/precompiled.h
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = zec-qt-wallet
+TARGET = zcl-qt-wallet
 
 TEMPLATE = app
 
@@ -72,7 +72,7 @@ HEADERS += \
     src/fillediconlabel.h \
     src/addressbook.h \
     src/logger.h \
-    src/addresscombo.h \ 
+    src/addresscombo.h \
     src/recurring.h
 
 FORMS += \
@@ -83,19 +83,19 @@ FORMS += \
     src/turnstile.ui \
     src/turnstileprogress.ui \
     src/privkey.ui \
-    src/memodialog.ui \ 
+    src/memodialog.ui \
     src/connection.ui \
     src/zboard.ui \
     src/addressbook.ui \
-    src/createzcashconfdialog.ui \
+    src/createzclassicconfdialog.ui \
     src/recurringdialog.ui \
     src/newrecurring.ui
 
 
-TRANSLATIONS = res/zec_qt_wallet_es.ts \
-               res/zec_qt_wallet_fr.ts \
-               res/zec_qt_wallet_de.ts \
-               res/zec_qt_wallet_pt.ts 
+TRANSLATIONS = res/zcl_qt_wallet_es.ts \
+               res/zcl_qt_wallet_fr.ts \
+               res/zcl_qt_wallet_de.ts \
+               res/zcl_qt_wallet_pt.ts
 
 win32: RC_ICONS = res/icon.ico
 ICON = res/logo.icns
