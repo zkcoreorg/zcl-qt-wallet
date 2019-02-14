@@ -602,12 +602,12 @@ std::shared_ptr<ConnectionConfig> ConnectionLoader::autoDetectZclassicConf() {
         if (name == "testnet" &&
             value == "1"  &&
             zclassicconf->port.isEmpty()) {
-                zclassicconf->port = "18232";
+                zclassicconf->port = "18023";
         }
     }
 
     // If rpcport is not in the file, and it was not set by the testnet=1 flag, then go to default
-    if (zclassicconf->port.isEmpty()) zclassicconf->port = "8232";
+    if (zclassicconf->port.isEmpty()) zclassicconf->port = "8023";
     file.close();
 
     // In addition to the zclassic.conf file, also double check the params.
