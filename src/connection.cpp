@@ -181,7 +181,7 @@ void ConnectionLoader::createZclassicConf() {
     QTextStream out(&file);
 
     out << "server=1\n";
-    out << "addnode=mainnet.z.cash\n";
+    out << "addnode=dnsseed.zcl.community\n";
     out << "rpcuser=zcl-qt-wallet\n";
     out << "rpcpassword=" % randomPassword() << "\n";
     if (!datadir.isEmpty()) {
@@ -235,7 +235,7 @@ void ConnectionLoader::doNextDownload(std::function<void(void)> cb) {
     int filesRemaining = downloadQueue->size();
 
     QString filename = fnSaveFileName(url);
-    QString paramsDir = zclassicParamsDir();
+    QString paramsDir = zcashParamsDir();
 
     if (QFile(QDir(paramsDir).filePath(filename)).exists()) {
         main->logger->write(filename + " already exists, skipping");
@@ -520,13 +520,13 @@ QString ConnectionLoader::zclassicConfWritableLocation() {
     return QDir::cleanPath(confLocation);
 }
 
-QString ConnectionLoader::zclassicParamsDir() {
+QString ConnectionLoader::zcashParamsDir() {
     #ifdef Q_OS_LINUX
-    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".zclassic-params"));
+    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".zcash-params"));
 #elif defined(Q_OS_DARWIN)
-    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath("Library/Application Support/ZclassicParams"));
+    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath("Library/Application Support/ZcashParams"));
 #else
-    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("../../ZclassicParams"));
+    auto paramsLocation = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("../../ZcashParams"));
 #endif
 
     if (!paramsLocation.exists()) {
@@ -539,7 +539,7 @@ QString ConnectionLoader::zclassicParamsDir() {
 }
 
 bool ConnectionLoader::verifyParams() {
-    QDir paramsDir(zclassicParamsDir());
+    QDir paramsDir(zcashParamsDir());
 
     if (!QFile(paramsDir.filePath("sapling-output.params")).exists()) return false;
     if (!QFile(paramsDir.filePath("sapling-spend.params")).exists()) return false;

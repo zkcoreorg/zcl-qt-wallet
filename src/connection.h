@@ -50,7 +50,7 @@ private:
     void createZclassicConf();
     QString locateZclassicConfFile();
     QString zclassicConfWritableLocation();
-    QString zclassicParamsDir();
+    QString zcashParamsDir();
 
     bool verifyParams();
     void downloadParams(std::function<void(void)> cb);
