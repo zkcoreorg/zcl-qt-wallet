@@ -1,3 +1,3 @@
-/home/james/dev/zcl/zcl-qt-wallet/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/james/dev/zcl/zcl-qt-wallet/cmake-build-debug/CMakeFiles/zcl_qt_wallet.dir
-/home/james/dev/zcl/zcl-qt-wallet/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/james/dev/zkc/zkc-qt-wallet/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/james/dev/zkc/zkc-qt-wallet/cmake-build-debug/CMakeFiles/zkc_qt_wallet.dir
+/home/james/dev/zkc/zkc-qt-wallet/cmake-build-debug/CMakeFiles/edit_cache.dir

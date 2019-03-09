@@ -1,4 +1,4 @@
-# Install script for directory: /home/james/dev/zcl/zcl-qt-wallet
+# Install script for directory: /home/james/dev/zkc/zkc-qt-wallet
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/james/dev/zcl/zcl-qt-wallet/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/james/dev/zkc/zkc-qt-wallet/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

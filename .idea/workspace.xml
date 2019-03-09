@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
-      <config projectName="zcl_qt_wallet" targetName="zcl_qt_wallet" />
+      <config projectName="zkc_qt_wallet" targetName="zkc_qt_wallet" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -91,12 +91,12 @@
         <subPane>
           <expand>
             <path>
-              <item name="zcl_qt_wallet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="zcl-qt-wallet" type="462c0819:PsiDirectoryNode" />
+              <item name="zkc_qt_wallet" type="b2602c69:ProjectViewProjectNode" />
+              <item name="zkc-qt-wallet" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="zcl_qt_wallet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="zcl-qt-wallet" type="462c0819:PsiDirectoryNode" />
+              <item name="zkc_qt_wallet" type="b2602c69:ProjectViewProjectNode" />
+              <item name="zkc-qt-wallet" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -122,7 +122,7 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="zcl_qt_wallet" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="zcl_qt_wallet" TARGET_NAME="zcl_qt_wallet" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="zcl_qt_wallet" RUN_TARGET_NAME="zcl_qt_wallet">
+    <configuration name="zkc_qt_wallet" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="zkc_qt_wallet" TARGET_NAME="zkc_qt_wallet" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="zkc_qt_wallet" RUN_TARGET_NAME="zkc_qt_wallet">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>

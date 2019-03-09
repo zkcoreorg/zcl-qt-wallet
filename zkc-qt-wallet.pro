@@ -12,7 +12,7 @@ PRECOMPILED_HEADER = src/precompiled.h
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = zcl-qt-wallet
+TARGET = zkc-qt-wallet
 
 TEMPLATE = app
 
@@ -87,15 +87,15 @@ FORMS += \
     src/connection.ui \
     src/zboard.ui \
     src/addressbook.ui \
-    src/createzclassicconfdialog.ui \
+    src/createzkcoreconfdialog.ui \
     src/recurringdialog.ui \
     src/newrecurring.ui
 
 
-TRANSLATIONS = res/zcl_qt_wallet_es.ts \
-               res/zcl_qt_wallet_fr.ts \
-               res/zcl_qt_wallet_de.ts \
-               res/zcl_qt_wallet_pt.ts
+TRANSLATIONS = res/zkc_qt_wallet_es.ts \
+               res/zkc_qt_wallet_fr.ts \
+               res/zkc_qt_wallet_de.ts \
+               res/zkc_qt_wallet_pt.ts
 
 win32: RC_ICONS = res/icon.ico
 ICON = res/logo.icns

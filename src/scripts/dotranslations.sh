@@ -6,12 +6,12 @@ if [ -z $QT_STATIC ]; then
 fi
 
 rm -f res/*.qm
-$QT_STATIC/bin/lrelease zcl-qt-wallet.pro
+$QT_STATIC/bin/lrelease zkc-qt-wallet.pro
 
 # Then update the qt base translations. First, get all languages
 ls res/*.qm | awk -F '[_.]' '{print $4}' | while read -r language ; do
     if [ -f $QT_STATIC/translations/qtbase_$language.qm ]; then
-        $QT_STATIC/bin/lconvert -o res/zcl_$language.qm $QT_STATIC/translations/qtbase_$language.qm res/zcl_qt_wallet_$language.qm
-        mv res/zcl_$language.qm res/zcl_qt_wallet_$language.qm
+        $QT_STATIC/bin/lconvert -o res/zkc_$language.qm $QT_STATIC/translations/qtbase_$language.qm res/zkc_qt_wallet_$language.qm
+        mv res/zkc_$language.qm res/zkc_qt_wallet_$language.qm
     fi
 done

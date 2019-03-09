@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("zcl-qt-wallet.log"));
+    logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("zkc-qt-wallet.log"));
 
     // Status Bar
     setupStatusBar();
@@ -43,8 +43,8 @@ MainWindow::MainWindow(QWidget *parent) :
         rpc->checkForUpdate(false);
     });
 
-    // Pay zclassic URI
-    QObject::connect(ui->actionPay_URI, &QAction::triggered, this, &MainWindow::payZclassicURI);
+    // Pay zkcore URI
+    QObject::connect(ui->actionPay_URI, &QAction::triggered, this, &MainWindow::payzkCoreURI);
 
     // Import Private Key
     QObject::connect(ui->actionImport_Private_Key, &QAction::triggered, this, &MainWindow::importPrivKey);
@@ -80,8 +80,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // Initialize to the balances tab
     ui->tabWidget->setCurrentIndex(0);
 
-    // The zclassicd tab is hidden by default, and only later added in if the embedded zclassicd is started
-    zclassicdtab = ui->tabWidget->widget(4);
+    // The zkcored tab is hidden by default, and only later added in if the embedded zkcored is started
+    zkcoredtab = ui->tabWidget->widget(4);
     ui->tabWidget->removeTab(4);
 
     setupSendTab();
@@ -89,7 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setupRecieveTab();
     setupBalancesTab();
     setupTurnstileDialog();
-    setupZclassicdTab();
+    setupzkCoredTab();
 
     rpc = new RPC(this);
 
@@ -113,7 +113,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     s.setValue("tratablegeometry", ui->transactionsTable->horizontalHeader()->saveState());
 
     // Let the RPC know to shut down any running service.
-    rpc->shutdownZclassicd();
+    rpc->shutdownzkCored();
 
     // Bubble up
     QMainWindow::closeEvent(event);
@@ -227,7 +227,7 @@ void MainWindow::turnstileDoMigration(QString fromAddr) {
         return bal;
     };
 
-    turnstile.fromBalance->setText(Settings::getZCLUSDDisplayFormat(fnGetAllSproutBalance()));
+    turnstile.fromBalance->setText(Settings::getZKCUSDDisplayFormat(fnGetAllSproutBalance()));
     for (auto addr : *rpc->getAllZAddresses()) {
         auto bal = rpc->getAllBalances()->value(addr);
         if (Settings::getInstance()->isSaplingAddress(addr)) {
@@ -251,12 +251,12 @@ void MainWindow::turnstileDoMigration(QString fromAddr) {
             bal = rpc->getAllBalances()->value(addr);
         }
 
-        auto balTxt = Settings::getZCLUSDDisplayFormat(bal);
+        auto balTxt = Settings::getZKCUSDDisplayFormat(bal);
 
         if (bal < Turnstile::minMigrationAmount) {
             turnstile.fromBalance->setStyleSheet("color: red;");
             turnstile.fromBalance->setText(balTxt % " [You need at least "
-                        % Settings::getZCLDisplayFormat(Turnstile::minMigrationAmount)
+                        % Settings::getZKCDisplayFormat(Turnstile::minMigrationAmount)
                         % " for automatic migration]");
             turnstile.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         } else {
@@ -284,7 +284,7 @@ void MainWindow::turnstileDoMigration(QString fromAddr) {
     QObject::connect(turnstile.privLevel, QOverload<int>::of(&QComboBox::currentIndexChanged), [=] (auto idx) {
         // Update the fees
         turnstile.minerFee->setText(
-            Settings::getZCLUSDDisplayFormat(std::get<0>(privOptions[idx]) * Settings::getMinerFee()));
+            Settings::getZKCUSDDisplayFormat(std::get<0>(privOptions[idx]) * Settings::getMinerFee()));
     });
 
     for (auto i : privOptions) {
@@ -386,7 +386,7 @@ void MainWindow::setupSettingsModal() {
         // Setup clear button
         QObject::connect(settings.btnClearSaved, &QCheckBox::clicked, [=]() {
             if (QMessageBox::warning(this, "Clear saved history?",
-                "Shielded z-Address transactions are stored locally in your wallet, outside zclassicd. You may delete this saved information safely any time for your privacy.\nDo you want to delete the saved shielded transactions now?",
+                "Shielded z-Address transactions are stored locally in your wallet, outside zkcored. You may delete this saved information safely any time for your privacy.\nDo you want to delete the saved shielded transactions now?",
                 QMessageBox::Yes, QMessageBox::Cancel)) {
                     SentTxStore::deleteHistory();
                     // Reload after the clear button so existing txs disappear
@@ -409,10 +409,10 @@ void MainWindow::setupSettingsModal() {
             isUsingTor = !rpc->getConnection()->config->proxy.isEmpty();
         }
         settings.chkTor->setChecked(isUsingTor);
-        if (rpc->getEZclassicD() == nullptr) {
+        if (rpc->getEzkCoreD() == nullptr) {
             settings.chkTor->setEnabled(false);
             settings.lblTor->setEnabled(false);
-            QString tooltip = tr("Tor configuration is available only when running an embedded zclassicd.");
+            QString tooltip = tr("Tor configuration is available only when running an embedded zkcored.");
             settings.chkTor->setToolTip(tooltip);
             settings.lblTor->setToolTip(tooltip);
         }
@@ -421,17 +421,17 @@ void MainWindow::setupSettingsModal() {
         QIntValidator validator(0, 65535);
         settings.port->setValidator(&validator);
 
-        // If values are coming from zclassic.conf, then disable all the fields
-        auto zclassicConfLocation = Settings::getInstance()->getZclassicdConfLocation();
-        if (!zclassicConfLocation.isEmpty()) {
-            settings.confMsg->setText("Settings are being read from \n" + zclassicConfLocation);
+        // If values are coming from zkcore.conf, then disable all the fields
+        auto zkcoreConfLocation = Settings::getInstance()->getzkCoredConfLocation();
+        if (!zkcoreConfLocation.isEmpty()) {
+            settings.confMsg->setText("Settings are being read from \n" + zkcoreConfLocation);
             settings.hostname->setEnabled(false);
             settings.port->setEnabled(false);
             settings.rpcuser->setEnabled(false);
             settings.rpcpassword->setEnabled(false);
         }
         else {
-            settings.confMsg->setText("No local zclassic.conf found. Please configure connection manually.");
+            settings.confMsg->setText("No local zkcore.conf found. Please configure connection manually.");
             settings.hostname->setEnabled(true);
             settings.port->setEnabled(true);
             settings.rpcuser->setEnabled(true);
@@ -461,24 +461,24 @@ void MainWindow::setupSettingsModal() {
 
             if (!isUsingTor && settings.chkTor->isChecked()) {
                 // If "use tor" was previously unchecked and now checked
-                Settings::addToZclassicConf(zclassicConfLocation, "proxy=127.0.0.1:9050");
+                Settings::addTozkCoreConf(zkcoreConfLocation, "proxy=127.0.0.1:9050");
                 rpc->getConnection()->config->proxy = "proxy=127.0.0.1:9050";
 
                 QMessageBox::information(this, tr("Enable Tor"),
-                    tr("Connection over Tor has been enabled. To use this feature, you need to restart zcl-qt-wallet."),
+                    tr("Connection over Tor has been enabled. To use this feature, you need to restart zkc-qt-wallet."),
                     QMessageBox::Ok);
             }
             if (isUsingTor && !settings.chkTor->isChecked()) {
                 // If "use tor" was previously checked and now is unchecked
-                Settings::removeFromZclassicConf(zclassicConfLocation, "proxy");
+                Settings::removeFromzkCoreConf(zkcoreConfLocation, "proxy");
                 rpc->getConnection()->config->proxy.clear();
 
                 QMessageBox::information(this, tr("Disable Tor"),
-                    tr("Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart zcl-qt-wallet."),
+                    tr("Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart zkc-qt-wallet."),
                     QMessageBox::Ok);
             }
 
-            if (zclassicConfLocation.isEmpty()) {
+            if (zkcoreConfLocation.isEmpty()) {
                 // Save settings
                 Settings::getInstance()->saveSettings(
                     settings.hostname->text(),
@@ -516,9 +516,9 @@ void MainWindow::donate() {
                             Settings::getInstance()->isSaplingAddress(ui->inputsCombo->currentText())));
     ui->Address1->setCursorPosition(0);
     ui->Amount1->setText("0.01");
-    ui->MemoTxt1->setText(tr("Thanks for supporting zcl-qt-wallet!"));
+    ui->MemoTxt1->setText(tr("Thanks for supporting zkc-qt-wallet!"));
 
-    ui->statusBar->showMessage(tr("Donate 0.01 ") % Settings::getTokenName() % tr(" to support zcl-qt-wallet"));
+    ui->statusBar->showMessage(tr("Donate 0.01 ") % Settings::getTokenName() % tr(" to support zkc-qt-wallet"));
 
     // And switch to the send tab.
     ui->tabWidget->setCurrentIndex(1);
@@ -563,7 +563,7 @@ void MainWindow::postToZBoard() {
     QRegExpValidator v(QRegExp("^[a-zA-Z0-9_]{3,20}$"), zb.postAs);
     zb.postAs->setValidator(&v);
 
-    zb.feeAmount->setText(Settings::getZCLUSDDisplayFormat(Settings::getZboardAmount() + Settings::getMinerFee()));
+    zb.feeAmount->setText(Settings::getZKCUSDDisplayFormat(Settings::getZboardAmount() + Settings::getMinerFee()));
 
     auto fnBuildNameMemo = [=]() -> QString {
         auto memo = zb.memoTxt->toPlainText().trimmed();
@@ -669,39 +669,39 @@ void MainWindow::doImport(QList<QString>* keys) {
     }
 }
 
-void MainWindow::payZclassicURI() {
+void MainWindow::payzkCoreURI() {
     // Error to display if something goes wrong.
-    auto payZclassicURIError = [=] (QString errorDetail = "") {
-        QMessageBox::critical(this, tr("Error paying zclassic URI"),
-                tr("URI should be of the form 'zclassic:<addr>?amt=x&memo=y") + "\n" + errorDetail);
+    auto payzkCoreURIError = [=] (QString errorDetail = "") {
+        QMessageBox::critical(this, tr("Error paying zkcore URI"),
+                tr("URI should be of the form 'zkcore:<addr>?amt=x&memo=y") + "\n" + errorDetail);
     };
 
-    // Read a zclassic URI and pay it
-    QString uri = QInputDialog::getText(this, tr("Paste Zclassic URI"),
-        "Zclassic URI" + QString(" ").repeated(180));
+    // Read a zkcore URI and pay it
+    QString uri = QInputDialog::getText(this, tr("Paste zkCore URI"),
+        "zkCore URI" + QString(" ").repeated(180));
 
     if (uri.isEmpty())
         return;
 
-    // URI should be of the form zclassic://address?amt=x&memo=y
-    if (!uri.startsWith("zclassic:")) {
-        payZclassicURIError();
+    // URI should be of the form zkcore://address?amt=x&memo=y
+    if (!uri.startsWith("zkcore:")) {
+        payzkCoreURIError();
         return;
     }
 
     // Extract the address
-    uri = uri.right(uri.length() - QString("zclassic:").length());
+    uri = uri.right(uri.length() - QString("zkcore:").length());
 
     QRegExp re("([a-zA-Z0-9]+)");
     int pos;
     if ( (pos = re.indexIn(uri)) == -1 ) {
-        payZclassicURIError();
+        payzkCoreURIError();
         return;
     }
 
     QString addr = re.cap(1);
     if (!Settings::isValidAddress(addr)) {
-        payZclassicURIError(tr("Could not understand address"));
+        payzkCoreURIError(tr("Could not understand address"));
         return;
     }
     uri = uri.right(uri.length() - addr.length());
@@ -716,7 +716,7 @@ void MainWindow::payZclassicURI() {
         for (QString arg: args) {
             QStringList kv = arg.split("=");
             if (kv.length() != 2) {
-                payZclassicURIError();
+                payzkCoreURIError();
                 return;
             }
 
@@ -734,7 +734,7 @@ void MainWindow::payZclassicURI() {
                     memo = QByteArray::fromHex(memo.toUtf8());
                 }
             } else {
-                payZclassicURIError(tr("Unknown field in URI:") + kv[0]);
+                payzkCoreURIError(tr("Unknown field in URI:") + kv[0]);
                 return;
             }
         }
@@ -767,7 +767,7 @@ void MainWindow::importPrivKey() {
     pui.buttonBox->button(QDialogButtonBox::Save)->setVisible(false);
     pui.helpLbl->setText(QString() %
                         tr("Please paste your private keys (z-Addr or t-Addr) here, one per line") % ".\n" %
-                        tr("The keys will be imported into your connected zclassicd node"));
+                        tr("The keys will be imported into your connected zkcored node"));
 
     if (d.exec() == QDialog::Accepted && !pui.privKeyTxt->toPlainText().trimmed().isEmpty()) {
         auto rawkeys = pui.privKeyTxt->toPlainText().trimmed().split("\n");
@@ -793,7 +793,7 @@ void MainWindow::importPrivKey() {
  */
 void MainWindow::exportTransactions() {
     // First, get the export file name
-    QString exportName = "zclassic-transactions-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".csv";
+    QString exportName = "zkcore-transactions-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".csv";
 
     QUrl csvName = QFileDialog::getSaveFileUrl(this,
             tr("Export transactions"), exportName, "CSV file (*.csv)");
@@ -809,24 +809,24 @@ void MainWindow::exportTransactions() {
 
 /**
  * Backup the wallet.dat file. This is kind of a hack, since it has to read from the filesystem rather than an RPC call
- * This might fail for various reasons - Remote zclassicd, non-standard locations, custom params passed to zclassicd, many others
+ * This might fail for various reasons - Remote zkcored, non-standard locations, custom params passed to zkcored, many others
 */
 void MainWindow::backupWalletDat() {
     if (!rpc->getConnection())
         return;
 
-    QDir zclassicdir(rpc->getConnection()->config->zclassicDir);
-    QString backupDefaultName = "zclassic-wallet-backup-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".dat";
+    QDir zkcoredir(rpc->getConnection()->config->zkcoreDir);
+    QString backupDefaultName = "zkcore-wallet-backup-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".dat";
 
     if (Settings::getInstance()->isTestnet()) {
-        zclassicdir.cd("testnet3");
+        zkcoredir.cd("testnet3");
         backupDefaultName = "tesetnet-" + backupDefaultName;
     }
 
-    QFile wallet(zclassicdir.filePath("wallet.dat"));
+    QFile wallet(zkcoredir.filePath("wallet.dat"));
     if (!wallet.exists()) {
         QMessageBox::critical(this, tr("No wallet.dat"), tr("Couldn't find the wallet.dat on this computer") + "\n" +
-            tr("You need to back it up from the machine zclassicd is running on"), QMessageBox::Ok);
+            tr("You need to back it up from the machine zkcored is running on"), QMessageBox::Ok);
         return;
     }
 
@@ -874,7 +874,7 @@ void MainWindow::exportKeys(QString addr) {
     // Wire up save button
     QObject::connect(pui.buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked, [=] () {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                           allKeys ? "zclassic-all-privatekeys.txt" : "zclassic-privatekey.txt");
+                           allKeys ? "zkcore-all-privatekeys.txt" : "zkcore-privatekey.txt");
         QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly)) {
             QMessageBox::information(this, tr("Unable to open file"), file.errorString());
@@ -1015,8 +1015,8 @@ void MainWindow::setupBalancesTab() {
     });
 }
 
-void MainWindow::setupZclassicdTab() {
-    ui->zclassicdlogo->setBasePixmap(QPixmap(":/img/res/zclassicdlogo.gif"));
+void MainWindow::setupzkCoredTab() {
+    ui->zkcoredlogo->setBasePixmap(QPixmap(":/img/res/zkcoredlogo.gif"));
 }
 
 void MainWindow::setupTransactionsTab() {
@@ -1277,7 +1277,7 @@ void MainWindow::setupRecieveTab() {
         }
 
         ui->rcvLabel->setText(label);
-        ui->rcvBal->setText(Settings::getZCLUSDDisplayFormat(rpc->getAllBalances()->value(addr)));
+        ui->rcvBal->setText(Settings::getZKCUSDDisplayFormat(rpc->getAllBalances()->value(addr)));
         ui->txtRecieve->setPlainText(addr);
         ui->qrcodeDisplay->setAddress(addr);
         if (rpc->getUsedAddresses()->value(addr, false)) {

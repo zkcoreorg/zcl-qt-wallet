@@ -40,7 +40,7 @@ void Settings::saveSettings(const QString& host, const QString& port, const QStr
     init();
 }
 
-void Settings::setUsingZclassicConf(QString confLocation) {
+void Settings::setUsingzkCoreConf(QString confLocation) {
     if (!confLocation.isEmpty())
         _confLocation = confLocation;
 }
@@ -103,8 +103,8 @@ bool Settings::isSaplingActive() {
            (!isTestnet() && getBlockNumber() > 419200);
 }
 
-double Settings::getZCLPrice() {
-    return zclPrice;
+double Settings::getZKCPrice() {
+    return zkcPrice;
 }
 
 bool Settings::getAutoShield() {
@@ -153,8 +153,8 @@ void Settings::saveRestore(QDialog* d) {
 }
 
 QString Settings::getUSDFormat(double bal) {
-    if (!Settings::getInstance()->isTestnet() && Settings::getInstance()->getZCLPrice() > 0)
-        return "$" + QLocale(QLocale::English).toString(bal * Settings::getInstance()->getZCLPrice(), 'f', 2);
+    if (!Settings::getInstance()->isTestnet() && Settings::getInstance()->getZKCPrice() > 0)
+        return "$" + QLocale(QLocale::English).toString(bal * Settings::getInstance()->getZKCPrice(), 'f', 2);
     else
         return QString();
 }
@@ -171,17 +171,17 @@ QString Settings::getDecimalString(double amt) {
     return f;
 }
 
-QString Settings::getZCLDisplayFormat(double bal) {
+QString Settings::getZKCDisplayFormat(double bal) {
     // This is idiotic. Why doesn't QString have a way to do this?
     return getDecimalString(bal) % " " % Settings::getTokenName();
 }
 
-QString Settings::getZCLUSDDisplayFormat(double bal) {
+QString Settings::getZKCUSDDisplayFormat(double bal) {
     auto usdFormat = getUSDFormat(bal);
     if (!usdFormat.isEmpty())
-        return getZCLDisplayFormat(bal) % " (" % getUSDFormat(bal) % ")";
+        return getZKCDisplayFormat(bal) % " (" % getUSDFormat(bal) % ")";
     else
-        return getZCLDisplayFormat(bal);
+        return getZKCDisplayFormat(bal);
 }
 
 const QString Settings::txidStatusMessage = QString(QObject::tr("Tx submitted (right click to copy) txid:"));
@@ -190,7 +190,7 @@ QString Settings::getTokenName() {
     if (Settings::getInstance()->isTestnet()) {
         return "ZCT";
     } else {
-        return "ZCL";
+        return "ZKC";
     }
 }
 
@@ -207,7 +207,7 @@ QString Settings::getDonationAddr(bool sapling) {
             return "zcEgrceTwvoiFdEvPWcsJHAMrpLsprMF6aRJiQa3fan5ZphyXLPuHghnEPrEPRoEVzUy65GnMVyCTRdkT6BYBepnXh6NBYs";
 }
 
-bool Settings::addToZclassicConf(QString confLocation, QString line) {
+bool Settings::addTozkCoreConf(QString confLocation, QString line) {
     QFile file(confLocation);
     if (!file.open(QIODevice::ReadWrite | QIODevice::Append))
         return false;
@@ -220,7 +220,7 @@ bool Settings::addToZclassicConf(QString confLocation, QString line) {
     return true;
 }
 
-bool Settings::removeFromZclassicConf(QString confLocation, QString option) {
+bool Settings::removeFromzkCoreConf(QString confLocation, QString option) {
     // To remove an option, we'll create a new file, and copy over everything but the option.
     QFile file(confLocation);
     if (!file.open(QIODevice::ReadOnly))

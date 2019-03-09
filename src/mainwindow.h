@@ -47,7 +47,7 @@ public:
     QLabel*             statusLabel;
     QLabel*             statusIcon;
     QLabel*             loadingLabel;
-    QWidget*            zclassicdtab;
+    QWidget*            zkcoredtab;
 
     Logger*      logger;
 private:
@@ -57,7 +57,7 @@ private:
     void setupTransactionsTab();
     void setupRecieveTab();
     void setupBalancesTab();
-    void setupZclassicdTab();
+    void setupzkCoredTab();
 
     void setupTurnstileDialog();
     void setupSettingsModal();
@@ -92,7 +92,7 @@ private:
 
     void donate();
     void addressBook();
-    void payZclassicURI();
+    void payzkCoreURI();
     void postToZBoard();
     void importPrivKey();
     void exportAllKeys();

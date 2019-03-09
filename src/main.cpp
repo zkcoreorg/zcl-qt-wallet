@@ -11,15 +11,15 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    QCoreApplication::setOrganizationName("zcl-qt-wallet-org");
-    QCoreApplication::setApplicationName("zcl-qt-wallet");
+    QCoreApplication::setOrganizationName("zkc-qt-wallet-org");
+    QCoreApplication::setApplicationName("zkc-qt-wallet");
 
     QString locale = QLocale::system().name();
     locale.truncate(locale.lastIndexOf('_'));   // Get the language code
     qDebug() << "Loading locale " << locale;
 
     QTranslator translator;
-    translator.load(QString(":/translations/res/zcl_qt_wallet_") + locale);
+    translator.load(QString(":/translations/res/zkc_qt_wallet_") + locale);
     a.installTranslator(&translator);
 
     QIcon icon(":/icons/res/icon.ico");
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     }
 
     MainWindow w;
-    w.setWindowTitle("zcl-qt-wallet v" + QString(APP_VERSION));
+    w.setWindowTitle("zkc-qt-wallet v" + QString(APP_VERSION));
     w.show();
 
     return QApplication::exec();

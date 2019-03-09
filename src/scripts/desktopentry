@@ -1,13 +1,13 @@
 [Desktop Entry]
-Name=zcl-qt-wallet
-Comment=Full node and wallet for Zclassic
+Name=zkc-qt-wallet
+Comment=Full node and wallet for zkCore
 GenericName=Wallet
-Exec=/usr/local/bin/zcl-qt-wallet
-Icon=zcl-qt-wallet.xpm
+Exec=/usr/local/bin/zkc-qt-wallet
+Icon=zkc-qt-wallet.xpm
 Type=Application
 StartupNotify=true
 StartupWMClass=Code
 Categories=Utility;
 MimeType=text/plain;inode/directory;
-Keywords=zcl-qt-wallet;
+Keywords=zkc-qt-wallet;
 

@@ -12,8 +12,8 @@ case $key in
     shift # past argument
     shift # past value
     ;;
-    -z|--zclassic_path)
-    ZCLASSIC_DIR="$2"
+    -z|--zkcore_path)
+    ZKCASSIC_DIR="$2"
     shift # past argument
     shift # past value
     ;;
@@ -35,8 +35,8 @@ if [ -z $QT_PATH ]; then
     exit 1;
 fi
 
-if [ -z $ZCLASSIC_DIR ]; then
-    echo "ZCLASSIC_DIR is not set. Please set it to the base directory of a compiled zclassicd";
+if [ -z $ZKCASSIC_DIR ]; then
+    echo "ZKCASSIC_DIR is not set. Please set it to the base directory of a compiled zkcored";
     exit 1;
 fi
 
@@ -45,8 +45,8 @@ if [ -z $APP_VERSION ]; then
     exit 1;
 fi
 
-if [ ! -f $ZCLASSIC_DIR/src/zclassicd ]; then
-    echo "Could not find compiled zclassicd in $ZCLASSIC_DIR/src/.";
+if [ ! -f $ZKCASSIC_DIR/src/zkcored ]; then
+    echo "Could not find compiled zkcored in $ZKCASSIC_DIR/src/.";
     exit 1;
 fi
 
@@ -60,14 +60,14 @@ export PATH=$PATH:/usr/local/bin
 #Clean
 echo -n "Cleaning..............."
 make distclean >/dev/null 2>&1
-rm -f artifacts/macOS-zcl-qt-wallet-v$APP_VERSION.dmg
+rm -f artifacts/macOS-zkc-qt-wallet-v$APP_VERSION.dmg
 echo "[OK]"
 
 
 echo -n "Configuring............"
 # Build
 QT_STATIC=$QT_PATH src/scripts/dotranslations.sh >/dev/null
-$QT_PATH/bin/qmake zcl-qt-wallet.pro CONFIG+=release >/dev/null
+$QT_PATH/bin/qmake zkc-qt-wallet.pro CONFIG+=release >/dev/null
 echo "[OK]"
 
 
@@ -78,26 +78,26 @@ echo "[OK]"
 #Qt deploy
 echo -n "Deploying.............."
 mkdir artifacts >/dev/null 2>&1
-rm -f artifcats/zcl-qt-wallet.dmg >/dev/null 2>&1
+rm -f artifcats/zkc-qt-wallet.dmg >/dev/null 2>&1
 rm -f artifacts/rw* >/dev/null 2>&1
-cp $ZCLASSIC_DIR/src/zclassicd zcl-qt-wallet.app/Contents/MacOS/
-cp $ZCLASSIC_DIR/src/zclassic-cli zcl-qt-wallet.app/Contents/MacOS/
-$QT_PATH/bin/macdeployqt zcl-qt-wallet.app
+cp $ZKCASSIC_DIR/src/zkcored zkc-qt-wallet.app/Contents/MacOS/
+cp $ZKCASSIC_DIR/src/zkcore-cli zkc-qt-wallet.app/Contents/MacOS/
+$QT_PATH/bin/macdeployqt zkc-qt-wallet.app
 echo "[OK]"
 
 
 echo -n "Building dmg..........."
-create-dmg --volname "zcl-qt-wallet-v$APP_VERSION" --volicon "res/logo.icns" --window-pos 200 120 --icon "zcl-qt-wallet.app" 200 190  --app-drop-link 600 185 --hide-extension "zcl-qt-wallet.app"  --window-size 800 400 --hdiutil-quiet --background res/dmgbg.png  artifacts/macOS-zcl-qt-wallet-v$APP_VERSION.dmg zcl-qt-wallet.app >/dev/null 2>&1
+create-dmg --volname "zkc-qt-wallet-v$APP_VERSION" --volicon "res/logo.icns" --window-pos 200 120 --icon "zkc-qt-wallet.app" 200 190  --app-drop-link 600 185 --hide-extension "zkc-qt-wallet.app"  --window-size 800 400 --hdiutil-quiet --background res/dmgbg.png  artifacts/macOS-zkc-qt-wallet-v$APP_VERSION.dmg zkc-qt-wallet.app >/dev/null 2>&1
 
 #mkdir bin/dmgbuild >/dev/null 2>&1
 #sed "s/RELEASE_VERSION/${APP_VERSION}/g" res/appdmg.json > bin/dmgbuild/appdmg.json
 #cp res/logo.icns bin/dmgbuild/
 #cp res/dmgbg.png bin/dmgbuild/
 
-#cp -r zcl-qt-wallet.app bin/dmgbuild/
+#cp -r zkc-qt-wallet.app bin/dmgbuild/
 
-#appdmg --quiet bin/dmgbuild/appdmg.json artifacts/macOS-zcl-qt-wallet-v$APP_VERSION.dmg >/dev/null
-if [ ! -f artifacts/macOS-zcl-qt-wallet-v$APP_VERSION.dmg ]; then
+#appdmg --quiet bin/dmgbuild/appdmg.json artifacts/macOS-zkc-qt-wallet-v$APP_VERSION.dmg >/dev/null
+if [ ! -f artifacts/macOS-zkc-qt-wallet-v$APP_VERSION.dmg ]; then
     echo "[ERROR]"
     exit 1
 fi

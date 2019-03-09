@@ -48,11 +48,11 @@ public:
 
     bool    isSaplingActive();
 
-    void    setUsingZclassicConf(QString confLocation);
-    const   QString& getZclassicdConfLocation() { return _confLocation; }
+    void    setUsingzkCoreConf(QString confLocation);
+    const   QString& getzkCoredConfLocation() { return _confLocation; }
 
-    void    setZCLPrice(double p) { zclPrice = p; }
-    double  getZCLPrice();
+    void    setZKCPrice(double p) { zkcPrice = p; }
+    double  getZKCPrice();
 
     void    setPeers(int peers);
     int     getPeers();
@@ -67,8 +67,8 @@ public:
 
     static QString getDecimalString(double amt);
     static QString getUSDFormat(double bal);
-    static QString getZCLDisplayFormat(double bal);
-    static QString getZCLUSDDisplayFormat(double bal);
+    static QString getZKCDisplayFormat(double bal);
+    static QString getZKCUSDDisplayFormat(double bal);
 
     static QString getTokenName();
     static QString getDonationAddr(bool sapling);
@@ -79,8 +79,8 @@ public:
 
     static bool    isValidAddress(QString addr);
 
-    static bool    addToZclassicConf(QString confLocation, QString line);
-    static bool    removeFromZclassicConf(QString confLocation, QString option);
+    static bool    addTozkCoreConf(QString confLocation, QString line);
+    static bool    removeFromzkCoreConf(QString confLocation, QString option);
 
     static const QString labelRegExp;
 
@@ -102,7 +102,7 @@ private:
     int     _blockNumber      = 0;
     bool    _useEmbedded      = false;
     int     _peerConnections  = 0;
-    double zclPrice = 0.0;
+    double zkcPrice = 0.0;
 };
 
 #endif // SETTINGS_H

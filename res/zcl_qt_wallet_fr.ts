@@ -31,8 +31,8 @@
     <name>ConnectionDialog</name>
     <message>
         <location filename="../src/connection.ui" line="17"/>
-        <source>zcl-qt-wallet</source>
-        <translation>zcl-qt-wallet</translation>
+        <source>zkc-qt-wallet</source>
+        <translation>zkc-qt-wallet</translation>
     </message>
     <message>
         <location filename="../src/connection.ui" line="58"/>
@@ -44,8 +44,8 @@
     <name>MainWindow</name>
     <message>
         <location filename="../src/mainwindow.ui" line="14"/>
-        <source>zcl-qt-wallet</source>
-        <translation>zcl-qt-wallet</translation>
+        <source>zkc-qt-wallet</source>
+        <translation>zkc-qt-wallet</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="29"/>
@@ -233,8 +233,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="848"/>
-        <source>zclassicd</source>
-        <translation>zclassicd</translation>
+        <source>zkcored</source>
+        <translation>zkcored</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="878"/>
@@ -374,13 +374,13 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="1114"/>
-        <source>Pay zclassic &amp;URI...</source>
-        <translation>PAyer une URI zclassic</translation>
+        <source>Pay zkcore &amp;URI...</source>
+        <translation>PAyer une URI zkcore</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="409"/>
-        <source>Tor configuration is available only when running an embedded zclassicd.</source>
-        <translation>La configuration de Tor est disponible uniquement lors de l&apos;exécution du processus zclassicd intégré. </translation>
+        <source>Tor configuration is available only when running an embedded zkcored.</source>
+        <translation>La configuration de Tor est disponible uniquement lors de l&apos;exécution du processus zkcored intégré. </translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="461"/>
@@ -389,8 +389,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="462"/>
-        <source>Connection over Tor has been enabled. To use this feature, you need to restart zcl-qt-wallet.</source>
-        <translation>La connection via Tor est activée. Afin d&apos;utiliser cette fonctionnalité, veuillez redémarer zcl-qt-wallet.</translation>
+        <source>Connection over Tor has been enabled. To use this feature, you need to restart zkc-qt-wallet.</source>
+        <translation>La connection via Tor est activée. Afin d&apos;utiliser cette fonctionnalité, veuillez redémarer zkc-qt-wallet.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="470"/>
@@ -399,13 +399,13 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="471"/>
-        <source>Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart zcl-qt-wallet.</source>
-        <translation>La connection via Tor a été désactivée. Afin de complètement se déconnecter de Tor, vous devez redémarrer zcl-qt-wallet.</translation>
+        <source>Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart zkc-qt-wallet.</source>
+        <translation>La connection via Tor a été désactivée. Afin de complètement se déconnecter de Tor, vous devez redémarrer zkc-qt-wallet.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="513"/>
-        <source>Thanks for supporting zcl-qt-wallet!</source>
-        <translation>Merci de supporter zcl-qt-wallet !</translation>
+        <source>Thanks for supporting zkc-qt-wallet!</source>
+        <translation>Merci de supporter zkc-qt-wallet !</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="515"/>
@@ -414,8 +414,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="515"/>
-        <source> to support zcl-qt-wallet</source>
-        <translation> pour supporter zcl-qt-wallet</translation>
+        <source> to support zkc-qt-wallet</source>
+        <translation> pour supporter zkc-qt-wallet</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="551"/>
@@ -445,18 +445,18 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="666"/>
-        <source>Error paying zclassic URI</source>
-        <translation>Erreur lors du payement du URI zclassic</translation>
+        <source>Error paying zkcore URI</source>
+        <translation>Erreur lors du payement du URI zkcore</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="667"/>
-        <source>URI should be of the form &apos;zclassic:&lt;addr&gt;?amt=x&amp;memo=y</source>
-        <translation>Le format URI doit être comme suit: &apos;zclassic:&lt;addr&gt;?amt=x&amp;memo=y</translation>
+        <source>URI should be of the form &apos;zkcore:&lt;addr&gt;?amt=x&amp;memo=y</source>
+        <translation>Le format URI doit être comme suit: &apos;zkcore:&lt;addr&gt;?amt=x&amp;memo=y</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="671"/>
-        <source>Paste Zclassic URI</source>
-        <translation>Coller le URI Zclassic</translation>
+        <source>Paste zkCore URI</source>
+        <translation>Coller le URI zkCore</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="692"/>
@@ -475,8 +475,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="758"/>
-        <source>The keys will be imported into your connected zclassicd node</source>
-        <translation>Les clef seront importées dans votre noeud zclassicd connecté</translation>
+        <source>The keys will be imported into your connected zkcored node</source>
+        <translation>Les clef seront importées dans votre noeud zkcored connecté</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="793"/>
@@ -500,8 +500,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="817"/>
-        <source>You need to back it up from the machine zclassicd is running on</source>
-        <translation>Vous devez effectuer la sauvegarde depuis la machine sur laquelle zclassicd est en cours d&apos;exécution</translation>
+        <source>You need to back it up from the machine zkcored is running on</source>
+        <translation>Vous devez effectuer la sauvegarde depuis la machine sur laquelle zkcored est en cours d&apos;exécution</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="821"/>
@@ -713,53 +713,53 @@ Cette adresse ne semble pas être de type adresse-z</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="50"/>
-        <source>Starting embedded zclassicd</source>
-        <translation>Démarrage de zclassicd intégré</translation>
+        <source>Starting embedded zkcored</source>
+        <translation>Démarrage de zkcored intégré</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="60"/>
-        <source>zclassicd is set to run as daemon</source>
-        <translation>zclassicd est configuré pour s&apos;exécuter en tant que démon</translation>
+        <source>zkcored is set to run as daemon</source>
+        <translation>zkcored est configuré pour s&apos;exécuter en tant que démon</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="60"/>
-        <source>Waiting for zclassicd</source>
-        <translation>En attente de zclassicd</translation>
+        <source>Waiting for zkcored</source>
+        <translation>En attente de zkcored</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="75"/>
-        <source>You have zclassicd set to start as a daemon, which can cause problems with zcl-qt-wallet
+        <source>You have zkcored set to start as a daemon, which can cause problems with zkc-qt-wallet
 
-.Please remove the following line from your zclassic.conf and restart zcl-qt-wallet
+.Please remove the following line from your zkcore.conf and restart zkc-qt-wallet
 daemon=1</source>
-        <translation>vous avez zclassicd configuré pour démarrer en tant que démon ce qui peut causer des problèmes avec zcl-qt-wallet
+        <translation>vous avez zkcored configuré pour démarrer en tant que démon ce qui peut causer des problèmes avec zkc-qt-wallet
 
- Veuillez enlever la ligne suivante de votre fichier &quot;zclassic.conf&quot; et redémarrer zcl-qt-wallet:
+ Veuillez enlever la ligne suivante de votre fichier &quot;zkcore.conf&quot; et redémarrer zkc-qt-wallet:
 daemon=1</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="80"/>
-        <source>Couldn&apos;t start the embedded zclassicd.
+        <source>Couldn&apos;t start the embedded zkcored.
 
 Please try restarting.
 
-If you previously started zclassicd with custom arguments, you might need to reset zclassic.conf.
+If you previously started zkcored with custom arguments, you might need to reset zkcore.conf.
 
-If all else fails, please run zclassicd manually.</source>
-        <translation>Impossible de démarrer le zclassicd intégré.
+If all else fails, please run zkcored manually.</source>
+        <translation>Impossible de démarrer le zkcored intégré.
 
 Veuillez essayer de redémarrer.
 
-Si vous avez précédemment démarré zclassicd avec des arguments, vous devrez peut-être réinitialiser le fichier zclassic.conf.
+Si vous avez précédemment démarré zkcored avec des arguments, vous devrez peut-être réinitialiser le fichier zkcore.conf.
 
-Si tout échoue, exécutez zclassicd manuellement.</translation>
+Si tout échoue, exécutez zkcored manuellement.</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="91"/>
-        <source>Couldn&apos;t connect to zclassicd configured in zclassic.conf.
+        <source>Couldn&apos;t connect to zkcored configured in zkcore.conf.
 
-Not starting embedded zclassicd because --no-embedded was passed</source>
-        <translation>Le démarrage de zclassicd n&apos;a pas eu lieu car l&apos;argument --no-embedded a été utilisé au lancement</translation>
+Not starting embedded zkcored because --no-embedded was passed</source>
+        <translation>Le démarrage de zkcored n&apos;a pas eu lieu car l&apos;argument --no-embedded a été utilisé au lancement</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="183"/>
@@ -824,18 +824,18 @@ Not starting embedded zclassicd because --no-embedded was passed</source>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="613"/>
-        <source>Connected to zclassicd</source>
-        <translation>Connecté à zclassicd</translation>
+        <source>Connected to zkcored</source>
+        <translation>Connecté à zkcored</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="616"/>
-        <source>zclassicd has no peer connections</source>
-        <translation>zclassicd n'a aucune connexion à un pair</translation>
+        <source>zkcored has no peer connections</source>
+        <translation>zkcored n'a aucune connexion à un pair</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="634"/>
-        <source>There was an error connecting to zclassicd. The error was</source>
-        <translation>Une erreur est survenue lors de la connection à zclassicd. L&apos;erreur est</translation>
+        <source>There was an error connecting to zkcored. The error was</source>
+        <translation>Une erreur est survenue lors de la connection à zkcored. L&apos;erreur est</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="877"/>
@@ -886,13 +886,13 @@ Would you like to visit the releases page?</source>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1044"/>
-        <source>Please wait for zcl-qt-wallet to exit</source>
-        <translation>Veuillez patienter. Fermeture de zcl-qt-wallet en cours</translation>
+        <source>Please wait for zkc-qt-wallet to exit</source>
+        <translation>Veuillez patienter. Fermeture de zkc-qt-wallet en cours</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1045"/>
-        <source>Waiting for zclassicd to exit</source>
-        <translation>Attente de la fermeture de zclassicd</translation>
+        <source>Waiting for zkcored to exit</source>
+        <translation>Attente de la fermeture de zkcored</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="248"/>
@@ -901,8 +901,8 @@ Would you like to visit the releases page?</source>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="272"/>
-        <source>zclassicd error</source>
-        <translation>erreur zclassicd</translation>
+        <source>zkcored error</source>
+        <translation>erreur zkcored</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="339"/>
@@ -915,22 +915,22 @@ Veuillez configurer l&apos;hôte/port et utilisateur/mot de passe dans le menu E
     </message>
     <message>
         <location filename="../src/connection.cpp" line="351"/>
-        <source>Could not connect to zclassicd configured in settings.
+        <source>Could not connect to zkcored configured in settings.
 
 Please set the host/port and user/password in the Edit-&gt;Settings menu.</source>
-        <translation>Impossible de se connecter au zclassicd configuré dans les préférences.
+        <translation>Impossible de se connecter au zkcored configuré dans les préférences.
 
 Veuillez configurer l&apos;hôte/port et utilisateur/mot de passe dans le menu Edition-&gt;Préférences.</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="411"/>
-        <source>Authentication failed. The username / password you specified was not accepted by zclassicd. Try changing it in the Edit-&gt;Settings menu</source>
-        <translation>Authentification échouée. Le nom d&apos;utilisateur / mot de passe que vous avez spécifié n&apos;a pas été accepté par zclassicd. Essayez de le changer dans le menu Edition-&gt; Préférences</translation>
+        <source>Authentication failed. The username / password you specified was not accepted by zkcored. Try changing it in the Edit-&gt;Settings menu</source>
+        <translation>Authentification échouée. Le nom d&apos;utilisateur / mot de passe que vous avez spécifié n&apos;a pas été accepté par zkcored. Essayez de le changer dans le menu Edition-&gt; Préférences</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="426"/>
-        <source>Your zclassicd is starting up. Please wait.</source>
-        <translation>Votre zclassicd est en cours de démarrage. Veuillez patienter.</translation>
+        <source>Your zkcored is starting up. Please wait.</source>
+        <translation>Votre zkcored est en cours de démarrage. Veuillez patienter.</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="447"/>
@@ -967,8 +967,8 @@ Veuillez configurer l&apos;hôte/port et utilisateur/mot de passe dans le menu E
     </message>
     <message>
         <location filename="../src/addressbook.cpp" line="127"/>
-        <source> doesn&apos;t seem to be a valid Zclassic address.</source>
-        <translation> ne semble pas être une adresse Zclassic valide.</translation>
+        <source> doesn&apos;t seem to be a valid zkCore address.</source>
+        <translation> ne semble pas être une adresse zkCore valide.</translation>
     </message>
     <message>
         <location filename="../src/addressbook.cpp" line="137"/>
@@ -1057,8 +1057,8 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/settings.ui" line="33"/>
-        <source>zclassicd connection</source>
-        <translation>connection zclassicd</translation>
+        <source>zkcored connection</source>
+        <translation>connection zkcored</translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="62"/>
@@ -1268,8 +1268,8 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/confirm.ui" line="155"/>
-        <source>zclassicd doesn&apos;t seem to have any peers. You might not be connected to the internet, so this Transaction might not work.</source>
-        <translation>zclassicd semble n'avoir aucune connexion à un autre pair. Comme vous n&apos;êtes peut-être pas connecté à Internet, cette transaction pourrait ne pas fonctionner.</translation>
+        <source>zkcored doesn&apos;t seem to have any peers. You might not be connected to the internet, so this Transaction might not work.</source>
+        <translation>zkcored semble n'avoir aucune connexion à un autre pair. Comme vous n&apos;êtes peut-être pas connecté à Internet, cette transaction pourrait ne pas fonctionner.</translation>
     </message>
     <message>
         <location filename="../src/confirm.ui" line="168"/>
@@ -1316,8 +1316,8 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/zboard.ui" line="85"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ZBoard: Fully anonymous and untraceable chat messages based on the Zclassic blockchain. &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zboard: Messagerie entièrement anonyme et intraçable basée sur la blockchain Zclassic.  &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ZBoard: Fully anonymous and untraceable chat messages based on the zkCore blockchain. &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zboard: Messagerie entièrement anonyme et intraçable basée sur la blockchain zkCore.  &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../src/zboard.ui" line="107"/>

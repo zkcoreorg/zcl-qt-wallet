@@ -30,7 +30,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>zclassicd connection</string>
+       <string>zkcored connection</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>

@@ -38,15 +38,15 @@ public:
     ~RPC();
 
     void setConnection(Connection* c);
-    void setEZclassicd(QProcess* p);
-    const QProcess* getEZclassicD() { return ezclassicd; }
+    void setEzkCored(QProcess* p);
+    const QProcess* getEzkCoreD() { return ezkcored; }
 
     void refresh(bool force = false);
 
     void refreshAddresses();
 
     void checkForUpdate(bool silent = true);
-    void refreshZCLPrice();
+    void refreshZKCPrice();
     void getZboardTopics(std::function<void(QMap<QString, QString>)> cb);
 
     void executeTransaction(Tx tx,
@@ -73,7 +73,7 @@ public:
     void importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
     void importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
 
-    void shutdownZclassicd();
+    void shutdownzkCored();
     void noConnection();
 
     QString getDefaultSaplingAddress();
@@ -103,7 +103,7 @@ private:
     void getZAddresses          (const std::function<void(json)>& cb);
 
     Connection*                 conn                        = nullptr;
-    QProcess*                   ezclassicd                     = nullptr;
+    QProcess*                   ezkcored                     = nullptr;
 
     QList<UnspentOutput>*       utxos                       = nullptr;
     QMap<QString, double>*      allBalances                 = nullptr;

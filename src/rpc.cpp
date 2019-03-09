@@ -31,7 +31,7 @@ RPC::RPC(MainWindow* main) {
     // Set up timer to refresh Price
     priceTimer = new QTimer(main);
     QObject::connect(priceTimer, &QTimer::timeout, [=]() {
-        refreshZCLPrice();
+        refreshZKCPrice();
     });
     priceTimer->start(Settings::priceRefreshSpeed);  // Every hour
 
@@ -69,11 +69,11 @@ RPC::~RPC() {
     delete conn;
 }
 
-void RPC::setEZclassicd(QProcess* p) {
-    ezclassicd = p;
+void RPC::setEzkCored(QProcess* p) {
+    ezkcored = p;
 
-    if (ezclassicd && ui->tabWidget->widget(4) == nullptr) {
-        ui->tabWidget->addTab(main->zclassicdtab, "zclassicd");
+    if (ezkcored && ui->tabWidget->widget(4) == nullptr) {
+        ui->tabWidget->addTab(main->zkcoredtab, "zkcored");
     }
 }
 
@@ -85,7 +85,7 @@ void RPC::setConnection(Connection* c) {
 
     ui->statusBar->showMessage("Ready!");
 
-    refreshZCLPrice();
+    refreshZKCPrice();
     checkForUpdate();
 
     // Force update, because this might be coming from a settings update
@@ -497,7 +497,7 @@ void RPC::refreshReceivedZTrans(QList<QString> zaddrs) {
     );
 }
 
-/// This will refresh all the balance data from zclassicd
+/// This will refresh all the balance data from zkcored
 void RPC::refresh(bool force) {
     if  (conn == nullptr)
         return noConnection();
@@ -554,7 +554,7 @@ void RPC::getInfoThenRefresh(bool force) {
         }
 
         // Get network sol/s
-        if (ezclassicd) {
+        if (ezkcored) {
             json payload = {
                 {"jsonrpc", "1.0"},
                 {"id", "someid"},
@@ -589,8 +589,8 @@ void RPC::getInfoThenRefresh(bool force) {
             Settings::getInstance()->setSyncing(isSyncing);
             Settings::getInstance()->setBlockNumber(blockNumber);
 
-            // Update zclassicd tab if it exists
-            if (ezclassicd) {
+            // Update zkcored tab if it exists
+            if (ezkcored) {
                 if (isSyncing) {
                     QString txt = QString::number(blockNumber);
                     if (estimatedheight > 0) {
@@ -618,32 +618,32 @@ void RPC::getInfoThenRefresh(bool force) {
                 ")";
             main->statusLabel->setText(statusText);
 
-            auto zclPrice = Settings::getUSDFormat(1);
+            auto zkcPrice = Settings::getUSDFormat(1);
             QString tooltip;
             if (connections > 0) {
-                tooltip = QObject::tr("Connected to zclassicd");
+                tooltip = QObject::tr("Connected to zkcored");
             }
             else {
-                tooltip = QObject::tr("zclassicd has no peer connections");
+                tooltip = QObject::tr("zkcored has no peer connections");
             }
             tooltip = tooltip % "(v " % QString::number(version) % ")";
 
-            if (!zclPrice.isEmpty()) {
-                tooltip = "1 ZCL = " % zclPrice % "\n" % tooltip;
+            if (!zkcPrice.isEmpty()) {
+                tooltip = "1 ZKC = " % zkcPrice % "\n" % tooltip;
             }
             main->statusLabel->setToolTip(tooltip);
             main->statusIcon->setToolTip(tooltip);
         });
 
     }, [=](QNetworkReply* reply, const json&) {
-        // zclassicd has probably disappeared.
+        // zkcored has probably disappeared.
         this->noConnection();
 
         // Prevent multiple dialog boxes, because these are called async
         static bool shown = false;
         if (!shown && prevCallSucceeded) { // show error only first time
             shown = true;
-            QMessageBox::critical(main, QObject::tr("Connection Error"), QObject::tr("There was an error connecting to zclassicd. The error was") + ": \n\n"
+            QMessageBox::critical(main, QObject::tr("Connection Error"), QObject::tr("There was an error connecting to zkcored. The error was") + ": \n\n"
                 + reply->errorString(), QMessageBox::StandardButton::Ok);
             shown = false;
         }
@@ -725,9 +725,9 @@ void RPC::refreshBalances() {
         auto balZ = QString::fromStdString(reply["private"]).toDouble();
         auto tot  = QString::fromStdString(reply["total"]).toDouble();
 
-        ui->balSheilded   ->setText(Settings::getZCLDisplayFormat(balZ));
-        ui->balTransparent->setText(Settings::getZCLDisplayFormat(balT));
-        ui->balTotal      ->setText(Settings::getZCLDisplayFormat(tot));
+        ui->balSheilded   ->setText(Settings::getZKCDisplayFormat(balZ));
+        ui->balTransparent->setText(Settings::getZKCDisplayFormat(balT));
+        ui->balTotal      ->setText(Settings::getZKCDisplayFormat(tot));
 
         ui->balSheilded   ->setToolTip(Settings::getUSDFormat(balZ));
         ui->balTransparent->setToolTip(Settings::getUSDFormat(balT));
@@ -933,7 +933,7 @@ void RPC::checkForUpdate(bool silent) {
     if  (conn == nullptr)
         return noConnection();
 
-    QUrl cmcURL("https://api.github.com/repos/ZclassicCommunity/zcl-qt-wallet/releases");
+    QUrl cmcURL("https://api.github.com/repos/zkCoreCommunity/zkc-qt-wallet/releases");
 
     QNetworkRequest req;
     req.setUrl(cmcURL);
@@ -979,7 +979,7 @@ void RPC::checkForUpdate(bool silent) {
                             .arg(currentVersion.toString()),
                         QMessageBox::Yes, QMessageBox::Cancel);
                     if (ans == QMessageBox::Yes) {
-                        QDesktopServices::openUrl(QUrl("https://github.com/ZclassicCommunity/zcl-qt-wallet/releases"));
+                        QDesktopServices::openUrl(QUrl("https://github.com/zkCoreCommunity/zkc-qt-wallet/releases"));
                     } else {
                         // If the user selects cancel, don't bother them again for this version
                         s.setValue("update/lastversion", maxVersion.toString());
@@ -1000,8 +1000,8 @@ void RPC::checkForUpdate(bool silent) {
     });
 }
 
-// Get the ZCL->USD price from coinmarketcap using their API
-void RPC::refreshZCLPrice() {
+// Get the ZKC->USD price from coinmarketcap using their API
+void RPC::refreshZKCPrice() {
     if  (conn == nullptr)
         return noConnection();
 
@@ -1023,7 +1023,7 @@ void RPC::refreshZCLPrice() {
                 } else {
                     qDebug() << reply->errorString();
                 }
-                Settings::getInstance()->setZCLPrice(0);
+                Settings::getInstance()->setZKCPrice(0);
                 return;
             }
 
@@ -1031,15 +1031,15 @@ void RPC::refreshZCLPrice() {
 
             auto parsed = json::parse(all, nullptr, false);
             if (parsed.is_discarded()) {
-                Settings::getInstance()->setZCLPrice(0);
+                Settings::getInstance()->setZKCPrice(0);
                 return;
             }
 
             for (const json& item : parsed.get<json::array_t>()) {
-                if (item["symbol"].get<json::string_t>() == "ZCL") {
+                if (item["symbol"].get<json::string_t>() == "ZKC") {
                     QString price = QString::fromStdString(item["price_usd"].get<json::string_t>());
-                    qDebug() << "ZCL Price=" << price;
-                    Settings::getInstance()->setZCLPrice(price.toDouble());
+                    qDebug() << "ZKC Price=" << price;
+                    Settings::getInstance()->setZKCPrice(price.toDouble());
 
                     return;
                 }
@@ -1050,14 +1050,14 @@ void RPC::refreshZCLPrice() {
         }
 
         // If nothing, then set the price to 0;
-        Settings::getInstance()->setZCLPrice(0);
+        Settings::getInstance()->setZKCPrice(0);
     });
 }
 
-void RPC::shutdownZclassicd() {
-    // Shutdown embedded zclassicd if it was started
-    if (ezclassicd == nullptr || ezclassicd->processId() == 0 || conn == nullptr) {
-        // No zclassicd running internally, just return
+void RPC::shutdownzkCored() {
+    // Shutdown embedded zkcored if it was started
+    if (ezkcored == nullptr || ezkcored->processId() == 0 || conn == nullptr) {
+        // No zkcored running internally, just return
         return;
     }
 
@@ -1074,8 +1074,8 @@ void RPC::shutdownZclassicd() {
     Ui_ConnectionDialog connD;
     connD.setupUi(&d);
     connD.topIcon->setBasePixmap(QIcon(":/icons/res/icon.ico").pixmap(256, 256));
-    connD.status->setText(QObject::tr("Please wait for zcl-qt-wallet to exit"));
-    connD.statusDetail->setText(QObject::tr("Waiting for zclassicd to exit"));
+    connD.status->setText(QObject::tr("Please wait for zkc-qt-wallet to exit"));
+    connD.statusDetail->setText(QObject::tr("Waiting for zkcored to exit"));
 
     QTimer waiter(main);
 
@@ -1085,9 +1085,9 @@ void RPC::shutdownZclassicd() {
     QObject::connect(&waiter, &QTimer::timeout, [&] () {
         waitCount++;
 
-        if ((ezclassicd->atEnd() && ezclassicd->processId() == 0) ||
+        if ((ezkcored->atEnd() && ezkcored->processId() == 0) ||
             waitCount > 30 ||
-            conn->config->zclassicDaemon)  {   // If zclassicd is daemon, then we don't have to do anything else
+            conn->config->zkcoreDaemon)  {   // If zkcored is daemon, then we don't have to do anything else
             qDebug() << "Ended";
             waiter.stop();
             QTimer::singleShot(1000, [&]() { d.accept(); });
@@ -1097,7 +1097,7 @@ void RPC::shutdownZclassicd() {
     });
     waiter.start(1000);
 
-    // Wait for the zclassic process to exit.
+    // Wait for the zkcore process to exit.
     d.exec();
 }
 

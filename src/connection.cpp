@@ -2,7 +2,7 @@
 #include "mainwindow.h"
 #include "settings.h"
 #include "ui_connection.h"
-#include "ui_createzclassicconfdialog.h"
+#include "ui_createzkcoreconfdialog.h"
 #include "rpc.h"
 
 #include "precompiled.h"
@@ -30,74 +30,74 @@ void ConnectionLoader::loadConnection() {
     d->exec();
 }
 
-void ConnectionLoader::doAutoConnect(bool tryEzclassicdStart) {
+void ConnectionLoader::doAutoConnect(bool tryEzkcoredStart) {
     // Priority 1: Ensure all params are present.
     if (!verifyParams()) {
         downloadParams([=]() { this->doAutoConnect(); });
         return;
     }
 
-    // Priority 2: Try to connect to detect zclassic.conf and connect to it.
-    auto config = autoDetectZclassicConf();
+    // Priority 2: Try to connect to detect zkcore.conf and connect to it.
+    auto config = autoDetectzkCoreConf();
     main->logger->write(QObject::tr("Attempting autoconnect"));
 
     if (config.get() != nullptr) {
         auto connection = makeConnection(config);
 
-        refreshZclassicdState(connection, [=] () {
-            // Refused connection. So try and start embedded zclassicd
+        refreshzkCoredState(connection, [=] () {
+            // Refused connection. So try and start embedded zkcored
             if (Settings::getInstance()->useEmbedded()) {
-                if (tryEzclassicdStart) {
-                    this->showInformation(QObject::tr("Starting embedded zclassicd"));
-                    if (this->startEmbeddedZclassicd()) {
-                        // Embedded zclassicd started up. Wait a second and then refresh the connection
-                        main->logger->write("Embedded zclassicd started up, trying autoconnect in 1 sec");
+                if (tryEzkcoredStart) {
+                    this->showInformation(QObject::tr("Starting embedded zkcored"));
+                    if (this->startEmbeddedzkCored()) {
+                        // Embedded zkcored started up. Wait a second and then refresh the connection
+                        main->logger->write("Embedded zkcored started up, trying autoconnect in 1 sec");
                         QTimer::singleShot(1000, [=]() { doAutoConnect(); } );
                     } else {
-                        if (config->zclassicDaemon) {
-                            // zclassicd is configured to run as a daemon, so we must wait for a few seconds
+                        if (config->zkcoreDaemon) {
+                            // zkcored is configured to run as a daemon, so we must wait for a few seconds
                             // to let it start up.
-                            main->logger->write("zclassicd is daemon=1. Waiting for it to start up");
-                            this->showInformation(QObject::tr("zclassicd is set to run as daemon"), QObject::tr("Waiting for zclassicd"));
-                            QTimer::singleShot(5000, [=]() { doAutoConnect(/* don't attempt to start ezclassicd */ false); });
+                            main->logger->write("zkcored is daemon=1. Waiting for it to start up");
+                            this->showInformation(QObject::tr("zkcored is set to run as daemon"), QObject::tr("Waiting for zkcored"));
+                            QTimer::singleShot(5000, [=]() { doAutoConnect(/* don't attempt to start ezkcored */ false); });
                         } else {
                             // Something is wrong.
                             // We're going to attempt to connect to the one in the background one last time
                             // and see if that works, else throw an error
-                            main->logger->write("Unknown problem while trying to start zclassicd");
-                            QTimer::singleShot(2000, [=]() { doAutoConnect(/* don't attempt to start ezclassicd */ false); });
+                            main->logger->write("Unknown problem while trying to start zkcored");
+                            QTimer::singleShot(2000, [=]() { doAutoConnect(/* don't attempt to start ezkcored */ false); });
                         }
                     }
                 } else {
-                    // We tried to start ezclassicd previously, and it didn't work. So, show the error.
-                    main->logger->write("Couldn't start embedded zclassicd for unknown reason");
+                    // We tried to start ezkcored previously, and it didn't work. So, show the error.
+                    main->logger->write("Couldn't start embedded zkcored for unknown reason");
                     QString explanation;
-                    if (config->zclassicDaemon) {
-                        explanation = QString() % QObject::tr("You have zclassicd set to start as a daemon, which can cause problems "
-                            "with zcl-qt-wallet\n\n."
-                            "Please remove the following line from your zclassic.conf and restart zcl-qt-wallet\n"
+                    if (config->zkcoreDaemon) {
+                        explanation = QString() % QObject::tr("You have zkcored set to start as a daemon, which can cause problems "
+                            "with zkc-qt-wallet\n\n."
+                            "Please remove the following line from your zkcore.conf and restart zkc-qt-wallet\n"
                             "daemon=1");
                     } else {
-                        explanation = QString() % QObject::tr("Couldn't start the embedded zclassicd.\n\n"
-                            "Please try restarting.\n\nIf you previously started zclassicd with custom arguments, you might need to reset zclassic.conf.\n\n"
-                            "If all else fails, please run zclassicd manually.") %
-                            (ezclassicd ? QObject::tr("The process returned") + ":\n\n" % ezclassicd->errorString() : QString(""));
+                        explanation = QString() % QObject::tr("Couldn't start the embedded zkcored.\n\n"
+                            "Please try restarting.\n\nIf you previously started zkcored with custom arguments, you might need to reset zkcore.conf.\n\n"
+                            "If all else fails, please run zkcored manually.") %
+                            (ezkcored ? QObject::tr("The process returned") + ":\n\n" % ezkcored->errorString() : QString(""));
                     }
 
                     this->showError(explanation);
                 }
             } else {
-                // zclassic.conf exists, there's no connection, and the user asked us not to start zclassicd. Error!
-                main->logger->write("Not using embedded and couldn't connect to zclassicd");
-                QString explanation = QString() % QObject::tr("Couldn't connect to zclassicd configured in zclassic.conf.\n\n"
-                                      "Not starting embedded zclassicd because --no-embedded was passed");
+                // zkcore.conf exists, there's no connection, and the user asked us not to start zkcored. Error!
+                main->logger->write("Not using embedded and couldn't connect to zkcored");
+                QString explanation = QString() % QObject::tr("Couldn't connect to zkcored configured in zkcore.conf.\n\n"
+                                      "Not starting embedded zkcored because --no-embedded was passed");
                 this->showError(explanation);
             }
         });
     } else {
         if (Settings::getInstance()->useEmbedded()) {
-            // zclassic.conf was not found, so create one
-            createZclassicConf();
+            // zkcore.conf was not found, so create one
+            createzkCoreConf();
         } else {
             // Fall back to manual connect
             doManualConnect();
@@ -123,19 +123,19 @@ QString randomPassword() {
 }
 
 /**
- * This will create a new zclassic.conf, download Zclassic parameters.
+ * This will create a new zkcore.conf, download zkCore parameters.
  */
-void ConnectionLoader::createZclassicConf() {
-    main->logger->write("createZclassicConf");
+void ConnectionLoader::createzkCoreConf() {
+    main->logger->write("createzkCoreConf");
 
-    auto confLocation = zclassicConfWritableLocation();
+    auto confLocation = zkcoreConfWritableLocation();
     QFileInfo fi(confLocation);
 
     QDialog d(main);
-    Ui_createZclassicConf ui;
+    Ui_createzkCoreConf ui;
     ui.setupUi(&d);
 
-    QPixmap logo(":/img/res/zclassicdlogo.gif");
+    QPixmap logo(":/img/res/zkcoredlogo.gif");
     ui.lblTopIcon->setBasePixmap(logo.scaled(256, 256, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     ui.btnPickDir->setEnabled(false);
 
@@ -174,15 +174,15 @@ void ConnectionLoader::createZclassicConf() {
 
     QFile file(confLocation);
     if (!file.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
-        main->logger->write("Could not create zclassic.conf, returning");
+        main->logger->write("Could not create zkcore.conf, returning");
         return;
     }
 
     QTextStream out(&file);
 
     out << "server=1\n";
-    out << "addnode=dnsseed.zcl.community\n";
-    out << "rpcuser=zcl-qt-wallet\n";
+    out << "addnode=dnsseed.zkc.community\n";
+    out << "rpcuser=zkc-qt-wallet\n";
     out << "rpcpassword=" % randomPassword() << "\n";
     if (!datadir.isEmpty()) {
         out << "datadir=" % datadir % "\n";
@@ -193,7 +193,7 @@ void ConnectionLoader::createZclassicConf() {
 
     file.close();
 
-    // Now that zclassic.conf exists, try to autoconnect again
+    // Now that zkcore.conf exists, try to autoconnect again
     this->doAutoConnect();
 }
 
@@ -303,19 +303,19 @@ void ConnectionLoader::doNextDownload(std::function<void(void)> cb) {
     });
 }
 
-bool ConnectionLoader::startEmbeddedZclassicd() {
+bool ConnectionLoader::startEmbeddedzkCored() {
     if (!Settings::getInstance()->useEmbedded())
         return false;
 
-    main->logger->write("Trying to start embedded zclassicd");
+    main->logger->write("Trying to start embedded zkcored");
 
     // Static because it needs to survive even after this method returns.
     static QString processStdErrOutput;
 
-    if (ezclassicd != nullptr) {
-        if (ezclassicd->state() == QProcess::NotRunning) {
+    if (ezkcored != nullptr) {
+        if (ezkcored->state() == QProcess::NotRunning) {
             if (!processStdErrOutput.isEmpty()) {
-                QMessageBox::critical(main, QObject::tr("zclassicd error"), "zclassicd said: " + processStdErrOutput,
+                QMessageBox::critical(main, QObject::tr("zkcored error"), "zkcored said: " + processStdErrOutput,
                                       QMessageBox::Ok);
             }
             return false;
@@ -324,52 +324,52 @@ bool ConnectionLoader::startEmbeddedZclassicd() {
         }
     }
 
-    // Finally, start zclassicd
+    // Finally, start zkcored
     QDir appPath(QCoreApplication::applicationDirPath());
 #ifdef Q_OS_LINUX
-    auto zclassicdProgram = appPath.absoluteFilePath("zqw-zclassicd");
-    if (!QFile(zclassicdProgram).exists()) {
-        zclassicdProgram = appPath.absoluteFilePath("zclassicd");
+    auto zkcoredProgram = appPath.absoluteFilePath("zqw-zkcored");
+    if (!QFile(zkcoredProgram).exists()) {
+        zkcoredProgram = appPath.absoluteFilePath("zkcored");
     }
 #elif defined(Q_OS_DARWIN)
-    auto zclassicdProgram = appPath.absoluteFilePath("zclassicd");
+    auto zkcoredProgram = appPath.absoluteFilePath("zkcored");
 #else
-    auto zclassicdProgram = appPath.absoluteFilePath("zclassicd.exe");
+    auto zkcoredProgram = appPath.absoluteFilePath("zkcored.exe");
 #endif
 
-    if (!QFile(zclassicdProgram).exists()) {
-        qDebug() << "Can't find zclassicd at " << zclassicdProgram;
-        main->logger->write("Can't find zclassicd at " + zclassicdProgram);
+    if (!QFile(zkcoredProgram).exists()) {
+        qDebug() << "Can't find zkcored at " << zkcoredProgram;
+        main->logger->write("Can't find zkcored at " + zkcoredProgram);
         return false;
     }
 
-    ezclassicd = new QProcess(main);
-    QObject::connect(ezclassicd, &QProcess::started, [=] () {
-        //qDebug() << "zclassicd started";
+    ezkcored = new QProcess(main);
+    QObject::connect(ezkcored, &QProcess::started, [=] () {
+        //qDebug() << "zkcored started";
     });
 
-    QObject::connect(ezclassicd, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+    QObject::connect(ezkcored, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
                         [=](int, QProcess::ExitStatus) {
-        //qDebug() << "zclassicd finished with code " << exitCode << "," << exitStatus;
+        //qDebug() << "zkcored finished with code " << exitCode << "," << exitStatus;
     });
 
-    QObject::connect(ezclassicd, &QProcess::errorOccurred, [&] (auto) {
-        //qDebug() << "Couldn't start zclassicd: " << error;
+    QObject::connect(ezkcored, &QProcess::errorOccurred, [&] (auto) {
+        //qDebug() << "Couldn't start zkcored: " << error;
     });
 
-    QObject::connect(ezclassicd, &QProcess::readyReadStandardError, [=]() {
-        auto output = ezclassicd->readAllStandardError();
-       main->logger->write("zclassicd stderr:" + output);
+    QObject::connect(ezkcored, &QProcess::readyReadStandardError, [=]() {
+        auto output = ezkcored->readAllStandardError();
+       main->logger->write("zkcored stderr:" + output);
         processStdErrOutput.append(output);
     });
 
 #ifdef Q_OS_LINUX
-    ezclassicd->start(zclassicdProgram);
+    ezkcored->start(zkcoredProgram);
 #elif defined(Q_OS_DARWIN)
-    ezclassicd->start(zclassicdProgram);
+    ezkcored->start(zkcoredProgram);
 #else
-    ezclassicd->setWorkingDirectory(appPath.absolutePath());
-    ezclassicd->start("zclassicd.exe");
+    ezkcored->setWorkingDirectory(appPath.absolutePath());
+    ezkcored->start("zkcored.exe");
 #endif // Q_OS_LINUX
 
 
@@ -392,9 +392,9 @@ void ConnectionLoader::doManualConnect() {
     }
 
     auto connection = makeConnection(config);
-    refreshZclassicdState(connection, [=] () {
+    refreshzkCoredState(connection, [=] () {
         QString explanation = QString()
-                % QObject::tr("Could not connect to zclassicd configured in settings.\n\n"
+                % QObject::tr("Could not connect to zkcored configured in settings.\n\n"
                 "Please set the host/port and user/password in the Edit->Settings menu.");
 
         showError(explanation);
@@ -405,7 +405,7 @@ void ConnectionLoader::doManualConnect() {
 }
 
 void ConnectionLoader::doRPCSetConnection(Connection* conn) {
-    rpc->setEZclassicd(ezclassicd);
+    rpc->setEzkCored(ezkcored);
     rpc->setConnection(conn);
 
     d->accept();
@@ -432,7 +432,7 @@ Connection* ConnectionLoader::makeConnection(std::shared_ptr<ConnectionConfig> c
     return new Connection(main, client, request, config);
 }
 
-void ConnectionLoader::refreshZclassicdState(Connection* connection, std::function<void(void)> refused) {
+void ConnectionLoader::refreshzkCoredState(Connection* connection, std::function<void(void)> refused) {
     json payload = {
         {"jsonrpc", "1.0"},
         {"id", "someid"},
@@ -455,7 +455,7 @@ void ConnectionLoader::refreshZclassicdState(Connection* connection, std::functi
                 main->logger->write("Authentication failed");
                 QString explanation = QString() %
                         QObject::tr("Authentication failed. The username / password you specified was "
-                        "not accepted by zclassicd. Try changing it in the Edit->Settings menu");
+                        "not accepted by zkcored. Try changing it in the Edit->Settings menu");
 
                 this->showError(explanation);
             } else if (err == QNetworkReply::NetworkError::InternalServerError &&
@@ -469,10 +469,10 @@ void ConnectionLoader::refreshZclassicdState(Connection* connection, std::functi
                     if (dots > 3)
                         dots = 0;
                 }
-                this->showInformation(QObject::tr("Your zclassicd is starting up. Please wait."), status);
-                main->logger->write("Waiting for zclassicd to come online.");
+                this->showInformation(QObject::tr("Your zkcored is starting up. Please wait."), status);
+                main->logger->write("Waiting for zkcored to come online.");
                 // Refresh after one second
-                QTimer::singleShot(1000, [=]() { this->refreshZclassicdState(connection, refused); });
+                QTimer::singleShot(1000, [=]() { this->refreshzkCoredState(connection, refused); });
             }
         }
     );
@@ -487,36 +487,36 @@ void ConnectionLoader::showInformation(QString info, QString detail) {
  * Show error will close the loading dialog and show an error.
 */
 void ConnectionLoader::showError(QString explanation) {
-    rpc->setEZclassicd(nullptr);
+    rpc->setEzkCored(nullptr);
     rpc->noConnection();
 
     QMessageBox::critical(main, QObject::tr("Connection Error"), explanation, QMessageBox::Ok);
     d->close();
 }
 
-QString ConnectionLoader::locateZclassicConfFile() {
+QString ConnectionLoader::locatezkCoreConfFile() {
 #ifdef Q_OS_LINUX
-    auto confLocation = QStandardPaths::locate(QStandardPaths::HomeLocation, ".zclassic/zclassic.conf");
+    auto confLocation = QStandardPaths::locate(QStandardPaths::HomeLocation, ".zkcore/zkcore.conf");
 #elif defined(Q_OS_DARWIN)
-    auto confLocation = QStandardPaths::locate(QStandardPaths::HomeLocation, "Library/Application Support/Zclassic/zclassic.conf");
+    auto confLocation = QStandardPaths::locate(QStandardPaths::HomeLocation, "Library/Application Support/zkCore/zkcore.conf");
 #else
-    auto confLocation = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../../Zclassic/zclassic.conf");
+    auto confLocation = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../../zkCore/zkcore.conf");
 #endif
 
-    main->logger->write("Found zclassicconf at " + QDir::cleanPath(confLocation));
+    main->logger->write("Found zkcoreconf at " + QDir::cleanPath(confLocation));
     return QDir::cleanPath(confLocation);
 }
 
-QString ConnectionLoader::zclassicConfWritableLocation() {
+QString ConnectionLoader::zkcoreConfWritableLocation() {
 #ifdef Q_OS_LINUX
-    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".zclassic/zclassic.conf");
+    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".zkcore/zkcore.conf");
 #elif defined(Q_OS_DARWIN)
-    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath("Library/Application Support/Zclassic/zclassic.conf");
+    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath("Library/Application Support/zkCore/zkcore.conf");
 #else
-    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("../../Zclassic/zclassic.conf");
+    auto confLocation = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("../../zkCore/zkcore.conf");
 #endif
 
-    main->logger->write("Found zclassicconf at " + QDir::cleanPath(confLocation));
+    main->logger->write("Found zkcoreconf at " + QDir::cleanPath(confLocation));
     return QDir::cleanPath(confLocation);
 }
 
@@ -534,7 +534,7 @@ QString ConnectionLoader::zcashParamsDir() {
         QDir().mkpath(paramsLocation.absolutePath());
     }
 
-    main->logger->write("Found Zclassic params directory at " + paramsLocation.absolutePath());
+    main->logger->write("Found zkCore params directory at " + paramsLocation.absolutePath());
     return paramsLocation.absolutePath();
 }
 
@@ -551,13 +551,13 @@ bool ConnectionLoader::verifyParams() {
 }
 
 /**
- * Try to automatically detect a zclassic.conf file in the correct location and load parameters
+ * Try to automatically detect a zkcore.conf file in the correct location and load parameters
  */
-std::shared_ptr<ConnectionConfig> ConnectionLoader::autoDetectZclassicConf() {
-    auto confLocation = locateZclassicConfFile();
+std::shared_ptr<ConnectionConfig> ConnectionLoader::autoDetectzkCoreConf() {
+    auto confLocation = locatezkCoreConfFile();
 
     if (confLocation.isNull()) {
-        // No Zclassic file, just return with nothing
+        // No zkCore file, just return with nothing
         return nullptr;
     }
 
@@ -569,14 +569,14 @@ std::shared_ptr<ConnectionConfig> ConnectionLoader::autoDetectZclassicConf() {
 
     QTextStream in(&file);
 
-    auto zclassicconf = new ConnectionConfig();
-    zclassicconf->host     = "127.0.0.1";
-    zclassicconf->connType = ConnectionType::DetectedConfExternalZclassicD;
-    zclassicconf->usingZclassicConf = true;
-    zclassicconf->zclassicDir = QFileInfo(confLocation).absoluteDir().absolutePath();
-    zclassicconf->zclassicDaemon = false;
+    auto zkcoreconf = new ConnectionConfig();
+    zkcoreconf->host     = "127.0.0.1";
+    zkcoreconf->connType = ConnectionType::DetectedConfExternalzkCoreD;
+    zkcoreconf->usingzkCoreConf = true;
+    zkcoreconf->zkcoreDir = QFileInfo(confLocation).absoluteDir().absolutePath();
+    zkcoreconf->zkcoreDaemon = false;
 
-    Settings::getInstance()->setUsingZclassicConf(confLocation);
+    Settings::getInstance()->setUsingzkCoreConf(confLocation);
 
     while (!in.atEnd()) {
         QString line = in.readLine();
@@ -585,38 +585,38 @@ std::shared_ptr<ConnectionConfig> ConnectionLoader::autoDetectZclassicConf() {
         QString value = line.right(line.length() - s - 1).trimmed();
 
         if (name == "rpcuser") {
-            zclassicconf->rpcuser = value;
+            zkcoreconf->rpcuser = value;
         }
         if (name == "rpcpassword") {
-            zclassicconf->rpcpassword = value;
+            zkcoreconf->rpcpassword = value;
         }
         if (name == "rpcport") {
-            zclassicconf->port = value;
+            zkcoreconf->port = value;
         }
         if (name == "daemon" && value == "1") {
-            zclassicconf->zclassicDaemon = true;
+            zkcoreconf->zkcoreDaemon = true;
         }
         if (name == "proxy") {
-            zclassicconf->proxy = value;
+            zkcoreconf->proxy = value;
         }
         if (name == "testnet" &&
             value == "1"  &&
-            zclassicconf->port.isEmpty()) {
-                zclassicconf->port = "18023";
+            zkcoreconf->port.isEmpty()) {
+                zkcoreconf->port = "18023";
         }
     }
 
     // If rpcport is not in the file, and it was not set by the testnet=1 flag, then go to default
-    if (zclassicconf->port.isEmpty()) zclassicconf->port = "8023";
+    if (zkcoreconf->port.isEmpty()) zkcoreconf->port = "8023";
     file.close();
 
-    // In addition to the zclassic.conf file, also double check the params.
+    // In addition to the zkcore.conf file, also double check the params.
 
-    return std::shared_ptr<ConnectionConfig>(zclassicconf);
+    return std::shared_ptr<ConnectionConfig>(zkcoreconf);
 }
 
 /**
- * Load connection settings from the UI, which indicates an unknown, external zclassicd
+ * Load connection settings from the UI, which indicates an unknown, external zkcored
  */
 std::shared_ptr<ConnectionConfig> ConnectionLoader::loadFromSettings() {
     // Load from the QT Settings.
@@ -630,7 +630,7 @@ std::shared_ptr<ConnectionConfig> ConnectionLoader::loadFromSettings() {
     if (username.isEmpty() || password.isEmpty())
         return nullptr;
 
-    auto uiConfig = new ConnectionConfig{ host, port, username, password, false, false, "", "", ConnectionType::UISettingsZclassicD};
+    auto uiConfig = new ConnectionConfig{ host, port, username, password, false, false, "", "", ConnectionType::UISettingszkCoreD};
 
     return std::shared_ptr<ConnectionConfig>(uiConfig);
 }

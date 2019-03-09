@@ -10,9 +10,9 @@ using json = nlohmann::json;
 class RPC;
 
 enum ConnectionType {
-    DetectedConfExternalZclassicD = 1,
-    UISettingsZclassicD,
-    InternalZclassicD
+    DetectedConfExternalzkCoreD = 1,
+    UISettingszkCoreD,
+    InternalzkCoreD
 };
 
 struct ConnectionConfig {
@@ -20,9 +20,9 @@ struct ConnectionConfig {
     QString port;
     QString rpcuser;
     QString rpcpassword;
-    bool    usingZclassicConf;
-    bool    zclassicDaemon;
-    QString zclassicDir;
+    bool    usingzkCoreConf;
+    bool    zkcoreDaemon;
+    QString zkcoreDir;
     QString proxy;
 
     ConnectionType connType;
@@ -39,32 +39,32 @@ public:
     void loadConnection();
 
 private:
-    std::shared_ptr<ConnectionConfig> autoDetectZclassicConf();
+    std::shared_ptr<ConnectionConfig> autoDetectzkCoreConf();
     std::shared_ptr<ConnectionConfig> loadFromSettings();
 
     Connection* makeConnection(std::shared_ptr<ConnectionConfig> config);
 
-    void doAutoConnect(bool tryEzclassicdStart = true);
+    void doAutoConnect(bool tryEzkcoredStart = true);
     void doManualConnect();
 
-    void createZclassicConf();
-    QString locateZclassicConfFile();
-    QString zclassicConfWritableLocation();
+    void createzkCoreConf();
+    QString locatezkCoreConfFile();
+    QString zkcoreConfWritableLocation();
     QString zcashParamsDir();
 
     bool verifyParams();
     void downloadParams(std::function<void(void)> cb);
     void doNextDownload(std::function<void(void)> cb);
-    bool startEmbeddedZclassicd();
+    bool startEmbeddedzkCored();
 
-    void refreshZclassicdState(Connection* connection, std::function<void(void)> refused);
+    void refreshzkCoredState(Connection* connection, std::function<void(void)> refused);
 
     void showError(QString explanation);
     void showInformation(QString info, QString detail = "");
 
     void doRPCSetConnection(Connection* conn);
 
-    QProcess*               ezclassicd  = nullptr;
+    QProcess*               ezkcored  = nullptr;
 
     QDialog*                d;
     Ui_ConnectionDialog*    connD;
@@ -81,7 +81,7 @@ private:
 };
 
 /**
- * Represents a connection to a zclassicd. It may even start a new zclassicd if needed.
+ * Represents a connection to a zkcored. It may even start a new zkcored if needed.
  * This is also a UI class, so it may show a dialog waiting for the connection.
 */
 class Connection {

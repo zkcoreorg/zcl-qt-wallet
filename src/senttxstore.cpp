@@ -55,7 +55,7 @@ void SentTxStore::addToSentTx(Tx tx, QString txid) {
     if (!Settings::getInstance()->getSaveZtxs())
         return;
 
-    // Also, only store outgoing txs where the from address is a z-Addr. Else, regular zclassicd
+    // Also, only store outgoing txs where the from address is a z-Addr. Else, regular zkcored
     // stores it just fine
     if (!tx.fromAddr.startsWith("z"))
         return;
@@ -90,7 +90,7 @@ void SentTxStore::addToSentTx(Tx tx, QString txid) {
     } else {
         // Concatenate all the toAddresses
         for (auto a : tx.toAddrs) {
-            toAddresses += a.addr % "(" % Settings::getZCLDisplayFormat(a.amount) % ")  ";
+            toAddresses += a.addr % "(" % Settings::getZKCDisplayFormat(a.amount) % ")  ";
         }
     }
 

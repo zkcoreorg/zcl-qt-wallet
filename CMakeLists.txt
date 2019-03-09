@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(zcl_qt_wallet)
+project(zkc_qt_wallet)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -7,7 +7,7 @@ include_directories(src)
 include_directories(src/3rdparty/json)
 include_directories(src/3rdparty/qrcode)
 
-add_executable(zcl_qt_wallet
+add_executable(zkc_qt_wallet
         docs/website/archetypes/default.md
         docs/website/content/about/_index.md
         docs/website/content/post/_index.md
@@ -103,17 +103,17 @@ add_executable(zcl_qt_wallet
         res/Ubuntu-R.ttf
         res/wxsbanner.bmp
         res/wxsdialog.bmp
-        res/zclassicdlogo.gif
-        res/zcl-qt-wallet.xpm
-        res/zcl_qt_wallet_de.qm
-        res/zcl_qt_wallet_de.ts
-        res/zcl_qt_wallet_es.qm
-        res/zcl_qt_wallet_es.ts
-        res/zcl_qt_wallet_fr.qm
-        res/zcl_qt_wallet_fr.ts
-        res/zcl_qt_wallet_pt.qm
-        res/zcl_qt_wallet_pt.ts
-        res/zcl_qt_wallet_template.ts
+        res/zkcoredlogo.gif
+        res/zkc-qt-wallet.xpm
+        res/zkc_qt_wallet_de.qm
+        res/zkc_qt_wallet_de.ts
+        res/zkc_qt_wallet_es.qm
+        res/zkc_qt_wallet_es.ts
+        res/zkc_qt_wallet_fr.qm
+        res/zkc_qt_wallet_fr.ts
+        res/zkc_qt_wallet_pt.qm
+        res/zkc_qt_wallet_pt.ts
+        res/zkc_qt_wallet_template.ts
         src/3rdparty/json/json.hpp
         src/3rdparty/qrcode/BitBuffer.cpp
         src/3rdparty/qrcode/BitBuffer.hpp
@@ -130,7 +130,7 @@ add_executable(zcl_qt_wallet
         src/scripts/mkrelease.sh
         src/scripts/mkwininstaller.ps1
         src/scripts/signbinaries.sh
-        src/scripts/zcl-qt-wallet.wxs
+        src/scripts/zkc-qt-wallet.wxs
         src/about.ui
         src/addressbook.cpp
         src/addressbook.h
@@ -143,7 +143,7 @@ add_executable(zcl_qt_wallet
         src/connection.cpp
         src/connection.h
         src/connection.ui
-        src/createzclassicconfdialog.ui
+        src/createzkcoreconfdialog.ui
         src/fillediconlabel.cpp
         src/fillediconlabel.h
         src/logger.cpp
@@ -180,4 +180,4 @@ add_executable(zcl_qt_wallet
         application.qrc
         LICENSE
         README.md
-        zcl-qt-wallet.pro)
+        zkc-qt-wallet.pro)
